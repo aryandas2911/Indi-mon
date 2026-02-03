@@ -1,5 +1,4 @@
-import React from 'react';
-import { Map, Scroll, Award, Settings, Briefcase, User } from 'lucide-react';
+import { Map, Scroll, Award, Settings, Briefcase } from 'lucide-react';
 
 interface SidebarProps {
     activeScreen: string;
