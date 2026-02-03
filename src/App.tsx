@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import GameContainer from './components/layout/GameContainer';
 import Sidebar from './components/layout/Sidebar';
 import ProfileScreen from './screens/ProfileScreen';
@@ -6,7 +6,49 @@ import LeaderboardScreen from './screens/LeaderboardScreen';
 import HeritageDexScreen from './screens/HeritageDexScreen';
 import CameraScreen from './screens/CameraScreen';
 import InfoScreen from './screens/InfoScreen';
-import { Camera, Maximize } from 'lucide-react';
+import { Camera, Maximize, Info } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+
+const INFO_SLIDES = [
+  "Mapping Bharat: Turn 500,000 undocumented sites into digital collectibles.",
+  "Become a Guardian: Instead of monsters, you catch Pillars and protect history.",
+  "The Lens of Truth: Use AI to verify structures and clear the Fog of War.",
+  "Heritage-Dex: Discover everything from Post Offices to Legendary Rock Art.",
+  "Preservation Army: Join 1.4 billion Indians mapping the soul of India."
+];
+
+const InfoCarousel = () => {
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setIndex((current) => (current + 1) % INFO_SLIDES.length);
+    }, 4500);
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <div className="flex items-center gap-4 text-left">
+      <div className="p-2 bg-indi-gold/10 rounded-lg text-indi-gold shrink-0">
+        <Info size={20} />
+      </div>
+      <div className="overflow-hidden h-12 flex items-center">
+        <AnimatePresence mode="wait">
+          <motion.p
+            key={index}
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: -20, opacity: 0 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            className="font-pixel text-lg text-indi-parchment leading-tight tracking-wide"
+          >
+            {INFO_SLIDES[index]}
+          </motion.p>
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+};
 
 export default function App() {
   const [screen, setScreen] = useState<'LANDING' | 'MAP' | 'DEX' | 'LEADERBOARD' | 'PROFILE'>('LANDING');
@@ -104,9 +146,14 @@ export default function App() {
             </h1>
 
             {/* Subtitle */}
-            <p className="font-serif text-2xl text-[#f5de8b] tracking-wider mb-20 opacity-90">
+            <p className="font-serif text-2xl text-[#f5de8b] tracking-wider mb-8 opacity-90">
               Gotta Map ’Em All
             </p>
+
+            {/* Info Carousel */}
+            <div className="h-20 mb-12 flex items-center justify-center text-center max-w-lg px-4 bg-black/20 backdrop-blur-sm rounded-xl border border-white/5">
+              <InfoCarousel />
+            </div>
 
             {/* Tap Indicator */}
             <div className="flex flex-col items-center gap-4 animate-pulse">
