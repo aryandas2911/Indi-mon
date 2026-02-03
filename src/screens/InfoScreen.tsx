@@ -1,5 +1,4 @@
-import React from 'react';
-import { ArrowLeft, Share2, MapPin, Eye, Star, X } from 'lucide-react';
+import {Share2, Eye, X } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const InfoScreen = ({ onBack }: { onBack: () => void }) => {

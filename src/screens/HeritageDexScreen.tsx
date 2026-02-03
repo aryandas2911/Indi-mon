@@ -1,5 +1,5 @@
-import React from 'react';
-import { Search, Bell, Map, Loader } from 'lucide-react';
+
+import { Search,  Map } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const HeritageDexScreen = () => {
@@ -92,7 +92,7 @@ const HeritageDexScreen = () => {
     );
 }
 
-const FilterItem = ({ label, active, count, isGray }: any) => (
+const FilterItem = ({ label, active, count}: any) => (
     <button className={`w-full flex justify-between items-center px-4 py-3 rounded-lg text-xs font-bold uppercase tracking-wider transition-all ${active ? 'bg-indi-gold text-black shadow-lg shadow-amber-900/20' : 'text-slate-500 hover:bg-white/5 hover:text-slate-300'}`}>
         <span>{label}</span>
         <span className={`${active ? 'bg-black/20 text-black' : 'bg-white/10 text-slate-400'} px-2 py-0.5 rounded text-[10px]`}>{count}</span>

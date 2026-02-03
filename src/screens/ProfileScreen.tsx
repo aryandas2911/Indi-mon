@@ -1,4 +1,3 @@
-import React from 'react';
 import { Award, Leaf, Droplet, Lock, Compass, Medal, Castle } from 'lucide-react';
 import { motion } from 'framer-motion';
 

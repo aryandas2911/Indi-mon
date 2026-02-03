@@ -1,5 +1,4 @@
-import React, { useRef } from 'react';
-import { X, Camera, Zap, RefreshCw, Maximize, FileText } from 'lucide-react';
+import { X, Zap, RefreshCw, Maximize, FileText } from 'lucide-react';
 
 const CameraScreen = ({ onClose }: { onClose: () => void }) => {
     return (

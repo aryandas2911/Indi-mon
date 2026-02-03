@@ -1,5 +1,4 @@
-import React from 'react';
-import { Award, Crown, ChevronRight, Trophy } from 'lucide-react';
+import {Crown, Trophy } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const LeaderboardScreen = () => {
