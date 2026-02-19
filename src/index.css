@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@plugin "@tailwindcss/vite";
 
 @theme {
   --color-indi-dark: #0f172a;
@@ -66,7 +65,7 @@ body {
   animation: spin-slow 12s linear infinite;
 }
 
-@keyframe pulse-slow {
+@keyframes pulse-slow {
 
   0%,
   100% {

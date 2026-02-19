@@ -2,7 +2,7 @@ import { Map, Scroll, Award, Settings, Briefcase } from 'lucide-react';
 
 interface SidebarProps {
     activeScreen: string;
-    setScreen: (screen: any) => void;
+    setScreen: (screen: 'LANDING' | 'MAP' | 'DEX' | 'LEADERBOARD' | 'PROFILE') => void;
 }
 
 const Sidebar = ({ activeScreen, setScreen }: SidebarProps) => {
@@ -65,7 +65,14 @@ const Sidebar = ({ activeScreen, setScreen }: SidebarProps) => {
     );
 };
 
-const NavItem = ({ icon, label, isActive, onClick }: any) => (
+interface NavItemProps {
+    icon: React.ReactNode;
+    label: string;
+    isActive: boolean;
+    onClick: () => void;
+}
+
+const NavItem = ({ icon, label, isActive, onClick }: NavItemProps) => (
     <button
         onClick={onClick}
         className={`w-full flex lg:justify-start justify-center items-center gap-3 p-3 rounded-lg transition-all duration-200 group relative
