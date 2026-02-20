@@ -1,4 +1,4 @@
-import { Map, Scroll, ShieldCheck, Settings, Briefcase } from 'lucide-react';
+import { Map, Scroll, ShieldCheck, Settings } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { motion } from 'framer-motion';
 
@@ -75,13 +75,6 @@ const Sidebar = ({ activeScreen, setScreen }: SidebarProps) => {
                     label="Verifier Console"
                     isActive={activeScreen === 'VERIFIER'}
                     onClick={() => setScreen('VERIFIER')}
-                    variants={itemVariants}
-                />
-                <NavItem
-                    icon={<Briefcase size={20} />}
-                    label="Inventory"
-                    isActive={activeScreen === 'INVENTORY'}
-                    onClick={() => { }}
                     variants={itemVariants}
                 />
             </div>
