@@ -2,8 +2,11 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LogOut, Shield, Compass } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
+import { useAuth } from '../hooks/useAuth';
 
 const SettingsScreen = () => {
+    const { user } = useAuth();
+    const explorerName = user?.user_metadata?.explorer_name || 'Explorer';
     const [isLoggingOut, setIsLoggingOut] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
 
@@ -65,7 +68,7 @@ const SettingsScreen = () => {
                             <div className="flex-1">
                                 <div className="flex justify-between items-start mb-4">
                                     <div>
-                                        <h4 className="text-4xl font-serif text-slate-100 tracking-wide mb-1">Explorer</h4>
+                                        <h4 className="text-4xl font-serif text-slate-100 tracking-wide mb-1">{explorerName}</h4>
                                         <p className="text-indi-gold font-serif text-sm tracking-[0.2em] uppercase opacity-80">Grand Sage</p>
                                     </div>
                                     <div className="text-right">

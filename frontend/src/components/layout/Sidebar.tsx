@@ -1,4 +1,5 @@
 import { Map, Scroll, Award, Settings, Briefcase } from 'lucide-react';
+import { useAuth } from '../../hooks/useAuth';
 
 interface SidebarProps {
     activeScreen: string;
@@ -6,6 +7,9 @@ interface SidebarProps {
 }
 
 const Sidebar = ({ activeScreen, setScreen }: SidebarProps) => {
+    const { user } = useAuth();
+    const explorerName = user?.user_metadata?.explorer_name || 'Explorer';
+
     return (
         <div className="w-44 h-full bg-[#161b22] border-r border-[#30363d] flex flex-col items-center py-6 z-20 shrink-0">
             {/* Profile Avatar / Top */}
@@ -14,8 +18,8 @@ const Sidebar = ({ activeScreen, setScreen }: SidebarProps) => {
                     <img src="/assets/profile-pic (1).jpg" className="w-full h-full rounded-full object-cover" />
                     <div className="absolute -bottom-1 -right-1 bg-indi-gold text-black text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold font-pixel border border-black">42</div>
                 </div>
-                <div className="block text-center">
-                    <h3 className="text-indi-gold font-serif text-sm tracking-wide group-hover:text-white transition-colors">Explorer</h3>
+                <div className="block text-center px-2">
+                    <h3 className="text-indi-gold font-serif text-sm tracking-wide group-hover:text-white transition-colors truncate w-32">{explorerName}</h3>
                     <p className="text-[9px] text-slate-500 uppercase tracking-widest">Grand Sage</p>
                 </div>
             </div>
