@@ -22,8 +22,8 @@ export const useAuth = () => {
                 .from('users')
                 .select('*')
                 .eq('id', userId)
-                .single();
-            
+                .maybeSingle();
+
             if (error) {
                 console.warn('Error fetching profile:', error.message);
                 return;
@@ -57,13 +57,13 @@ export const useAuth = () => {
         const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
             setSession(session);
             setUser(session?.user ?? null);
-            
+
             if (session?.user) {
                 fetchProfile(session.user.id);
             } else {
                 setProfile(null);
             }
-            
+
             setLoading(false);
         });
 

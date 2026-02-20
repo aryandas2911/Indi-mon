@@ -12,6 +12,7 @@ import SettingsScreen from './screens/SettingsScreen';
 import { useAuth } from './hooks/useAuth';
 import { Info } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import type { HeritageSite } from './data/heritageSites';
 
 const INFO_SLIDES = [
   "Mapping Bharat: Turn 500,000 undocumented sites into digital collectibles.",
@@ -58,13 +59,17 @@ export default function App() {
   const [screen, setScreen] = useState<'LANDING' | 'AUTH' | 'MAP' | 'DEX' | 'LEADERBOARD' | 'PROFILE' | 'SETTINGS'>('LANDING');
   const [showCamera, setShowCamera] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
+  const [selectedSite, setSelectedSite] = useState<HeritageSite | null>(null);
   const { user, loading } = useAuth();
 
   const renderScreen = () => {
     switch (screen) {
       case 'PROFILE': return <ProfileScreen />;
       case 'LEADERBOARD': return <LeaderboardScreen />;
-      case 'DEX': return <HeritageDexScreen onOpenInfo={() => setShowInfo(true)} />;
+      case 'DEX': return <HeritageDexScreen onOpenInfo={(site) => {
+        setSelectedSite(site);
+        setShowInfo(true);
+      }} />;
       case 'MAP': return <MapScreen onShowCamera={() => setShowCamera(true)} />;
       case 'SETTINGS': return <SettingsScreen />;
       default: return null;
@@ -107,9 +112,9 @@ export default function App() {
         </div>
       )}
 
-      {showInfo && (
+      {showInfo && selectedSite && (
         <div className="absolute inset-0 z-[90]">
-          <InfoScreen onBack={() => setShowInfo(false)} />
+          <InfoScreen site={selectedSite} onBack={() => setShowInfo(false)} />
         </div>
       )}
 

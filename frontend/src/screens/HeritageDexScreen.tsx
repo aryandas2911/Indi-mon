@@ -4,7 +4,7 @@ import { useState, useMemo } from 'react';
 import { heritageSites } from '../data/heritageSites';
 import type { HeritageSite } from '../data/heritageSites';
 
-const HeritageDexScreen = ({ onOpenInfo }: { onOpenInfo: () => void }) => {
+const HeritageDexScreen = ({ onOpenInfo }: { onOpenInfo: (site: HeritageSite) => void }) => {
     const [activeFilter, setActiveFilter] = useState<'ALL' | 'DELHI' | 'KERALA' | 'RAJASTHAN' | 'UNDISCOVERED'>('ALL');
     const [searchQuery, setSearchQuery] = useState('');
 
@@ -121,10 +121,18 @@ const HeritageDexScreen = ({ onOpenInfo }: { onOpenInfo: () => void }) => {
                             <p className="text-xs uppercase tracking-[0.2em] mt-2">Adjust your search or filter</p>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-2 gap-6 pb-12">
+                        <div className="grid grid-cols-1 gap-6 pb-12">
                             <AnimatePresence>
-                                {filteredSites.map(site => (
-                                    <DexCard key={site.id} site={site} onClick={onOpenInfo} />
+                                {[...filteredSites].sort((a, b) => {
+                                    const months: Record<string, number> = { Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5, Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11 };
+                                    const parseDate = (d?: string) => {
+                                        if (!d) return 0;
+                                        const [day, month] = d.split(' ');
+                                        return new Date(2025, months[month] || 0, parseInt(day)).getTime();
+                                    };
+                                    return parseDate(b.discoveredOn) - parseDate(a.discoveredOn);
+                                }).map(site => (
+                                    <DexCard key={site.id} site={site} onClick={() => onOpenInfo(site)} />
                                 ))}
                                 {undiscoveredSites.map(site => (
                                     <DexCard key={site.id} site={site} isUndiscovered />
