@@ -11,7 +11,7 @@ const Sidebar = ({ activeScreen, setScreen }: SidebarProps) => {
     const displayName = user?.user_metadata?.full_name || 'Explorer';
 
     return (
-        <div className="w-44 h-full bg-[#161b22] border-r border-[#30363d] flex flex-col items-center py-6 z-20 shrink-0">
+        <div className="w-44 h-full bg-black/55 backdrop-blur-md border-r border-indi-gold/15 flex flex-col items-center py-6 z-20 shrink-0">
             {/* Profile Avatar / Top */}
             <div className="mb-8 flex flex-col items-center cursor-pointer group" onClick={() => setScreen('PROFILE')}>
                 <div className="w-16 h-16 rounded-full border-2 border-indi-gold p-0.5 mb-2 relative">

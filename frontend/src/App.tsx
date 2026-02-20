@@ -102,28 +102,128 @@ export default function App() {
         <div
           className="w-full h-full flex items-center justify-center text-white relative overflow-hidden cursor-pointer group"
           style={{
-            background: `linear-gradient(rgba(45, 27, 21, 0.4), rgba(45, 27, 21, 0.4)), url("/assets/map.png")`,
+            background: `linear-gradient(rgba(30, 15, 5, 0.18), rgba(30, 15, 5, 0.18)), url("/assets/map.png")`,
             backgroundColor: '#2D1B15',
             backgroundSize: 'cover',
             backgroundBlendMode: 'multiply',
+            filter: 'none',
           }}
           onClick={() => setScreen(user ? 'PROFILE' : 'AUTH')}
         >
-          {/* Subtle Stone Block Texture Overlay (Faked with CSS lines) */}
-          <div className="absolute inset-0 opacity-10 pointer-events-none">
-            <div className="h-1/3 border-b border-black"></div>
-            <div className="h-1/3 border-b border-black"></div>
-            <div className="absolute left-1/4 top-0 bottom-1/3 border-l border-black"></div>
-            <div className="absolute left-3/4 top-1/3 bottom-1/3 border-l border-black"></div>
-            <div className="absolute left-1/2 top-2/3 bottom-0 border-l border-black"></div>
+          {/* Warm sepia vignette overlay */}
+          <div className="absolute inset-0 pointer-events-none" style={{
+            background: 'radial-gradient(ellipse at center, transparent 40%, rgba(30, 10, 0, 0.55) 100%)'
+          }} />
+
+          {/* Subtle Stone Block Texture Overlay */}
+          <div className="absolute inset-0 opacity-[0.07] pointer-events-none">
+            <div className="h-1/3 border-b border-amber-900"></div>
+            <div className="h-1/3 border-b border-amber-900"></div>
+            <div className="absolute left-1/4 top-0 bottom-1/3 border-l border-amber-900"></div>
+            <div className="absolute left-3/4 top-1/3 bottom-1/3 border-l border-amber-900"></div>
+            <div className="absolute left-1/2 top-2/3 bottom-0 border-l border-amber-900"></div>
+          </div>
+
+          {/* ── Map Markers ── */}
+          {/* Monument Marker – top-left area */}
+          <div className="absolute top-[18%] left-[14%] flex flex-col items-center gap-1 pointer-events-none select-none z-10">
+            <div className="relative flex items-center justify-center">
+              {/* Pulse ring */}
+              <span className="absolute w-10 h-10 rounded-full border-2 border-indi-gold/60 animate-ping" />
+              <span className="absolute w-7 h-7 rounded-full bg-indi-gold/20" />
+              {/* Monument icon */}
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="relative z-10 drop-shadow-[0_0_6px_rgba(245,158,11,0.9)]">
+                <polygon points="12,2 15,9 9,9" fill="#f59e0b" stroke="#92400e" strokeWidth="0.5" />
+                <rect x="10" y="9" width="4" height="9" fill="#f59e0b" stroke="#92400e" strokeWidth="0.5" />
+                <rect x="7" y="18" width="10" height="2" rx="0.5" fill="#d97706" stroke="#92400e" strokeWidth="0.5" />
+                <line x1="12" y1="2" x2="12" y2="0.5" stroke="#f59e0b" strokeWidth="1" />
+              </svg>
+            </div>
+            <span className="text-[10px] font-pixel text-indi-gold/90 tracking-widest bg-black/40 px-1.5 py-0.5 rounded">MONUMENT</span>
+          </div>
+
+          {/* Temple Marker – right side */}
+          <div className="absolute top-[30%] right-[12%] flex flex-col items-center gap-1 pointer-events-none select-none z-10">
+            <div className="relative flex items-center justify-center">
+              <span className="absolute w-10 h-10 rounded-full border-2 border-amber-400/50 animate-ping" style={{ animationDelay: '0.7s' }} />
+              <span className="absolute w-7 h-7 rounded-full bg-amber-500/20" />
+              {/* Temple / Gopuram icon */}
+              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" className="relative z-10 drop-shadow-[0_0_6px_rgba(251,191,36,0.9)]">
+                {/* Shikhara tiers */}
+                <polygon points="12,1 15.5,7 8.5,7" fill="#fbbf24" stroke="#92400e" strokeWidth="0.5" />
+                <polygon points="12,5.5 16.5,11 7.5,11" fill="#f59e0b" stroke="#92400e" strokeWidth="0.5" />
+                <polygon points="12,9 17.5,14 6.5,14" fill="#d97706" stroke="#92400e" strokeWidth="0.5" />
+                {/* Base */}
+                <rect x="8" y="14" width="8" height="6" fill="#b45309" stroke="#92400e" strokeWidth="0.5" />
+                {/* Door */}
+                <rect x="10.5" y="16" width="3" height="4" rx="1" fill="#7c2d12" />
+                {/* Base slab */}
+                <rect x="6" y="20" width="12" height="2" rx="0.5" fill="#92400e" />
+              </svg>
+            </div>
+            <span className="text-[10px] font-pixel text-amber-400/90 tracking-widest bg-black/40 px-1.5 py-0.5 rounded">TEMPLE</span>
+          </div>
+
+          {/* Fort Marker – bottom-left */}
+          <div className="absolute bottom-[22%] left-[20%] flex flex-col items-center gap-1 pointer-events-none select-none z-10">
+            <div className="relative flex items-center justify-center">
+              <span className="absolute w-10 h-10 rounded-full border-2 border-orange-400/50 animate-ping" style={{ animationDelay: '1.4s' }} />
+              <span className="absolute w-7 h-7 rounded-full bg-orange-500/15" />
+              {/* Fort / battlements icon */}
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="relative z-10 drop-shadow-[0_0_6px_rgba(249,115,22,0.9)]">
+                <rect x="3" y="10" width="18" height="11" rx="0.5" fill="#c2410c" stroke="#7c2d12" strokeWidth="0.5" />
+                {/* Battlements */}
+                <rect x="3" y="7" width="3" height="5" fill="#ea580c" stroke="#7c2d12" strokeWidth="0.5" />
+                <rect x="8" y="7" width="3" height="5" fill="#ea580c" stroke="#7c2d12" strokeWidth="0.5" />
+                <rect x="13" y="7" width="3" height="5" fill="#ea580c" stroke="#7c2d12" strokeWidth="0.5" />
+                <rect x="18" y="7" width="3" height="5" fill="#ea580c" stroke="#7c2d12" strokeWidth="0.5" />
+                {/* Gate arch */}
+                <path d="M10 21 L10 16 Q12 14 14 16 L14 21" fill="#7c2d12" />
+                <line x1="12" y1="6" x2="12" y2="4" stroke="#f97316" strokeWidth="1.5" />
+                <circle cx="12" cy="3.5" r="1" fill="#f97316" />
+              </svg>
+            </div>
+            <span className="text-[10px] font-pixel text-orange-400/90 tracking-widest bg-black/40 px-1.5 py-0.5 rounded">FORT</span>
           </div>
 
           <div className="z-10 flex flex-col items-center max-w-2xl px-12">
-            {/* Corner Brackets */}
-            <div className="absolute top-12 left-12 w-12 h-12 border-t border-l border-white/40"></div>
-            <div className="absolute top-12 right-12 w-12 h-12 border-t border-r border-white/40"></div>
-            <div className="absolute bottom-12 left-12 w-12 h-12 border-b border-l border-white/40"></div>
-            <div className="absolute bottom-12 right-12 w-12 h-12 border-b border-r border-white/40"></div>
+            {/* Ornate Indian corner decorations */}
+            {/* Top-Left */}
+            <svg className="absolute top-8 left-8 w-16 h-16 text-indi-gold/50" viewBox="0 0 64 64" fill="none">
+              <path d="M2 2 L24 2" stroke="currentColor" strokeWidth="1.5" />
+              <path d="M2 2 L2 24" stroke="currentColor" strokeWidth="1.5" />
+              <circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth="1" />
+              <circle cx="12" cy="12" r="2" fill="currentColor" fillOpacity="0.4" />
+              <path d="M16 2 L16 8 M8 2 L8 6" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+              <path d="M2 16 L8 16 M2 8 L6 8" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+            </svg>
+            {/* Top-Right */}
+            <svg className="absolute top-8 right-8 w-16 h-16 text-indi-gold/50" viewBox="0 0 64 64" fill="none">
+              <path d="M62 2 L40 2" stroke="currentColor" strokeWidth="1.5" />
+              <path d="M62 2 L62 24" stroke="currentColor" strokeWidth="1.5" />
+              <circle cx="52" cy="12" r="4" stroke="currentColor" strokeWidth="1" />
+              <circle cx="52" cy="12" r="2" fill="currentColor" fillOpacity="0.4" />
+              <path d="M48 2 L48 8 M56 2 L56 6" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+              <path d="M62 16 L56 16 M62 8 L58 8" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+            </svg>
+            {/* Bottom-Left */}
+            <svg className="absolute bottom-8 left-8 w-16 h-16 text-indi-gold/50" viewBox="0 0 64 64" fill="none">
+              <path d="M2 62 L24 62" stroke="currentColor" strokeWidth="1.5" />
+              <path d="M2 62 L2 40" stroke="currentColor" strokeWidth="1.5" />
+              <circle cx="12" cy="52" r="4" stroke="currentColor" strokeWidth="1" />
+              <circle cx="12" cy="52" r="2" fill="currentColor" fillOpacity="0.4" />
+              <path d="M16 62 L16 56 M8 62 L8 58" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+              <path d="M2 48 L8 48 M2 56 L6 56" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+            </svg>
+            {/* Bottom-Right */}
+            <svg className="absolute bottom-8 right-8 w-16 h-16 text-indi-gold/50" viewBox="0 0 64 64" fill="none">
+              <path d="M62 62 L40 62" stroke="currentColor" strokeWidth="1.5" />
+              <path d="M62 62 L62 40" stroke="currentColor" strokeWidth="1.5" />
+              <circle cx="52" cy="52" r="4" stroke="currentColor" strokeWidth="1" />
+              <circle cx="52" cy="52" r="2" fill="currentColor" fillOpacity="0.4" />
+              <path d="M48 62 L48 56 M56 62 L56 58" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+              <path d="M62 48 L56 48 M62 56 L58 56" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+            </svg>
 
             {/* Logo */}
             <div className="mb-6 w-48 h-48 drop-shadow-2xl">
@@ -135,13 +235,22 @@ export default function App() {
               Indi-Mon
             </h1>
 
-            {/* Subtitle */}
-            <p className="font-serif text-2xl text-[#f5de8b] tracking-wider mb-8 opacity-90">
-              Gotta Map ’Em All
-            </p>
+            {/* Subtitle with decorative dots */}
+            <div className="flex items-center gap-3 mb-8">
+              <span className="text-indi-gold/60 text-2xl">✦</span>
+              <p className="font-serif text-2xl text-[#f5de8b] tracking-wider opacity-90">
+                Gotta Map 'Em All
+              </p>
+              <span className="text-indi-gold/60 text-2xl">✦</span>
+            </div>
 
-            {/* Info Carousel */}
-            <div className="h-20 mb-12 flex items-center justify-center text-center max-w-lg px-4 bg-black/20 backdrop-blur-sm rounded-xl border border-white/5">
+            {/* Info Carousel with heritage border */}
+            <div className="h-20 mb-12 flex items-center justify-center text-center max-w-lg px-4 backdrop-blur-sm rounded-xl"
+              style={{
+                background: 'rgba(30, 10, 0, 0.45)',
+                border: '1px solid rgba(245,158,11,0.25)',
+                boxShadow: '0 0 20px rgba(245,158,11,0.08), inset 0 0 20px rgba(245,158,11,0.04)'
+              }}>
               <InfoCarousel />
             </div>
 
@@ -157,23 +266,71 @@ export default function App() {
                 </svg>
               </div>
 
-              <div className="h-[1px] w-48 bg-gradient-to-r from-transparent via-indi-gold/50 to-transparent"></div>
+              {/* Decorative Ashoka Chakra divider */}
+              <div className="flex items-center gap-3 w-64">
+                <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent to-indi-gold/50"></div>
+                <svg width="18" height="18" viewBox="0 0 24 24" className="text-indi-gold/70 shrink-0">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.2" fill="none" />
+                  <circle cx="12" cy="12" r="2" fill="currentColor" />
+                  {[0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330, 360].map((deg, i) => (
+                    <line
+                      key={i}
+                      x1="12" y1="4"
+                      x2="12" y2="10"
+                      stroke="currentColor" strokeWidth="1"
+                      transform={`rotate(${deg} 12 12)`}
+                    />
+                  ))}
+                </svg>
+                <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent to-indi-gold/50"></div>
+              </div>
 
               <span className="font-serif text-3xl text-indi-gold uppercase tracking-[0.3em] font-light">
                 Invoke to Begin
               </span>
 
-              <div className="h-[1px] w-48 bg-gradient-to-r from-transparent via-indi-gold/50 to-transparent"></div>
+              <div className="flex items-center gap-3 w-64">
+                <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent to-indi-gold/50"></div>
+                <svg width="18" height="18" viewBox="0 0 24 24" className="text-indi-gold/70 shrink-0">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.2" fill="none" />
+                  <circle cx="12" cy="12" r="2" fill="currentColor" />
+                  {[0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330, 360].map((deg, i) => (
+                    <line
+                      key={i}
+                      x1="12" y1="4"
+                      x2="12" y2="10"
+                      stroke="currentColor" strokeWidth="1"
+                      transform={`rotate(${deg} 12 12)`}
+                    />
+                  ))}
+                </svg>
+                <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent to-indi-gold/50"></div>
+              </div>
             </div>
           </div>
         </div>
       ) : (
-        <div className="w-full h-full flex bg-[#0b101b]">
+        <div
+          className="w-full h-full flex relative"
+          style={{
+            background: `linear-gradient(rgba(60, 28, 8, 0.82), rgba(60, 28, 8, 0.82)), url("/assets/map.png")`,
+            backgroundColor: '#1a0e06',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundBlendMode: 'multiply',
+            filter: 'sepia(0.25) brightness(0.92)',
+          }}
+        >
+          {/* Warm radial vignette */}
+          <div className="absolute inset-0 pointer-events-none z-0" style={{
+            background: 'radial-gradient(ellipse at center, transparent 30%, rgba(20, 8, 0, 0.6) 100%)'
+          }} />
+
           {/* Sidebar Navigation */}
           <Sidebar activeScreen={screen} setScreen={setScreen} />
 
           {/* Main Content Area */}
-          <div className="flex-1 h-full relative overflow-hidden">
+          <div className="flex-1 h-full relative overflow-hidden z-10">
             {renderScreen()}
           </div>
         </div>

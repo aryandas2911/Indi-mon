@@ -13,10 +13,10 @@ const LeaderboardScreen = () => {
         <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="w-full h-full bg-[#0b101b] text-slate-100 flex flex-col font-sans overflow-hidden"
+            className="w-full h-full bg-transparent text-slate-100 flex flex-col font-sans overflow-hidden"
         >
             {/* Header */}
-            <div className="h-20 border-b border-white/5 bg-[#0f172a] flex items-center justify-between px-8 shrink-0 relative z-10">
+            <div className="h-20 border-b border-white/10 bg-black/50 backdrop-blur-md flex items-center justify-between px-8 shrink-0 relative z-10">
                 <div className="flex items-center gap-4">
                     <div className="p-2 bg-indi-gold/10 rounded-lg text-indi-gold">
                         <Trophy size={24} />
@@ -37,7 +37,7 @@ const LeaderboardScreen = () => {
             {/* Content */}
             <div className="flex-1 flex overflow-hidden">
                 {/* Top 3 Podium (Left Panel) */}
-                <div className="w-[45%] h-full bg-gradient-to-b from-[#131b2e] to-[#0b101b] p-8 flex flex-col justify-center items-center relative border-r border-white/5">
+                <div className="w-[45%] h-full bg-black/40 backdrop-blur-sm p-8 flex flex-col justify-center items-center relative border-r border-white/10">
                     {/* Decoration */}
                     <div className="absolute inset-0 bg-[url('/assets/map.png')] opacity-5 mix-blend-overlay"></div>
 
@@ -83,7 +83,7 @@ const LeaderboardScreen = () => {
                 </div>
 
                 {/* List (Right Panel) */}
-                <div className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-2 bg-[#0b101b]">
+                <div className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-2 bg-black/30 backdrop-blur-sm">
                     {[4, 5, 6, 7, 8, 9, 10].map((rank) => (
                         <div key={rank} className="flex items-center gap-4 p-4 rounded-lg bg-slate-800/20 border border-white/5 hover:bg-slate-800/40 transition-colors">
                             <span className="font-serif text-slate-500 w-8 text-center text-lg opacity-50">{rank}</span>

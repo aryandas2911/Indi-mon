@@ -11,10 +11,10 @@ const ProfileScreen = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="w-full h-full bg-[#0b101b] text-slate-100 flex font-sans overflow-hidden"
+            className="w-full h-full bg-transparent text-slate-100 flex font-sans overflow-hidden"
         >
             {/* Left Column: Stats & Avatar (Fixed width) */}
-            <div className="w-1/3 min-w-[300px] h-full border-r border-white/5 bg-[#0f172a]/50 p-8 flex flex-col items-center justify-center relative">
+            <div className="w-1/3 min-w-[300px] h-full border-r border-white/10 bg-black/40 backdrop-blur-sm p-8 flex flex-col items-center justify-center relative">
                 <div className="relative group cursor-pointer mb-6">
                     {/* Glow Effect */}
                     <div className="absolute inset-0 bg-indi-gold/20 blur-xl rounded-full scale-110"></div>

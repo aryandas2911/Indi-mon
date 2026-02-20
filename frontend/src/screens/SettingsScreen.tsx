@@ -22,14 +22,13 @@ const SettingsScreen = () => {
         <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="w-full h-full bg-[#0b101b] text-slate-100 flex flex-col font-sans overflow-hidden relative"
+            className="w-full h-full bg-transparent text-slate-100 flex flex-col font-sans overflow-hidden relative"
         >
             {/* Background Decorative Elements */}
-            <div className="absolute inset-0 bg-[url('/assets/map.png')] opacity-5 mix-blend-overlay pointer-events-none"></div>
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-indi-gold/5 rounded-full blur-[120px] pointer-events-none"></div>
+            <div className="absolute inset-0 bg-indi-gold/5 rounded-full blur-[120px] pointer-events-none" style={{ top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 800, height: 800 }}></div>
 
             {/* Header */}
-            <div className="h-24 border-b border-white/5 bg-[#0f172a]/80 backdrop-blur-md flex items-center px-12 shrink-0 z-10">
+            <div className="h-24 border-b border-white/10 bg-black/50 backdrop-blur-md flex items-center px-12 shrink-0 z-10">
                 <div className="flex items-center gap-6">
                     <div className="p-3 bg-indi-gold/10 rounded-xl text-indi-gold border border-indi-gold/20 shadow-[0_0_15px_rgba(245,158,11,0.1)]">
                         <Shield size={28} />
