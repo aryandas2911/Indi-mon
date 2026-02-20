@@ -24,7 +24,8 @@ const HeritageDexScreen = ({ onOpenInfo }: { onOpenInfo: (site: HeritageSite) =>
             const regionFilterMap: Record<string, string> = {
                 'DELHI': 'Delhi',
                 'KERALA': 'Kerala',
-                'RAJASTHAN': 'Rajasthan'
+                'RAJASTHAN': 'Rajasthan',
+                'HAMPI': 'Hampi'
             };
 
             return site.region === regionFilterMap[activeFilter] && site.status !== 'Undiscovered' && matchesSearch;
@@ -46,6 +47,7 @@ const HeritageDexScreen = ({ onOpenInfo }: { onOpenInfo: (site: HeritageSite) =>
             DELHI: heritageSites.filter(s => s.region === 'Delhi' && s.status !== 'Undiscovered').length,
             KERALA: heritageSites.filter(s => s.region === 'Kerala' && s.status !== 'Undiscovered').length,
             RAJASTHAN: heritageSites.filter(s => s.region === 'Rajasthan' && s.status !== 'Undiscovered').length,
+            HAMPI: heritageSites.filter(s => s.region === 'Hampi' && s.status !== 'Undiscovered').length,
             UNDISCOVERED: heritageSites.filter(s => s.status === 'Undiscovered').length,
         };
     }, []);
@@ -89,6 +91,7 @@ const HeritageDexScreen = ({ onOpenInfo }: { onOpenInfo: (site: HeritageSite) =>
                     <FilterItem label="Delhi Region" active={activeFilter === 'DELHI'} count={counts.DELHI} onClick={() => setActiveFilter('DELHI')} />
                     <FilterItem label="Kerala Region" active={activeFilter === 'KERALA'} count={counts.KERALA} onClick={() => setActiveFilter('KERALA')} />
                     <FilterItem label="Rajasthan Region" active={activeFilter === 'RAJASTHAN'} count={counts.RAJASTHAN} onClick={() => setActiveFilter('RAJASTHAN')} />
+                    <FilterItem label="Hampi Region" active={activeFilter === 'HAMPI'} count={counts.HAMPI} onClick={() => setActiveFilter('HAMPI')} />
                     <FilterItem label="Undiscovered Sites" active={activeFilter === 'UNDISCOVERED'} count={counts.UNDISCOVERED} isGray onClick={() => setActiveFilter('UNDISCOVERED')} />
                 </div>
             </div>
