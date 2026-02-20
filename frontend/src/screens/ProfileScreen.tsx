@@ -1,8 +1,8 @@
-import { MapPin, History, Search } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { MapPin, History, Search, ChevronDown, ChevronRight } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../hooks/useAuth';
 import type { HeritageSite } from '../data/heritageSites';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
 interface ProfileProps {
     sites: HeritageSite[];
@@ -11,6 +11,7 @@ interface ProfileProps {
 const ProfileScreen = ({ sites }: ProfileProps) => {
     const { profile } = useAuth();
     const displayName = profile?.full_name || 'Explorer';
+    const [expandedStates, setExpandedStates] = useState<Record<string, boolean>>({});
 
     const verifiedSites = useMemo(() => sites.filter(s => s.status === 'Verified'), [sites]);
 
@@ -19,7 +20,7 @@ const ProfileScreen = ({ sites }: ProfileProps) => {
         return {
             monuments: verifiedSites.length,
             states: states.size,
-            wisdom: verifiedSites.length * 450 // Simplified logic
+            wisdom: verifiedSites.length * 450
         };
     }, [verifiedSites]);
 
@@ -31,6 +32,13 @@ const ProfileScreen = ({ sites }: ProfileProps) => {
         });
         return grouped;
     }, [verifiedSites]);
+
+    const toggleState = (state: string) => {
+        setExpandedStates(prev => ({
+            ...prev,
+            [state]: !prev[state]
+        }));
+    };
 
     const containerVariants = {
         hidden: { opacity: 0 },
@@ -56,23 +64,21 @@ const ProfileScreen = ({ sites }: ProfileProps) => {
             variants={containerVariants}
             className="w-full h-full bg-transparent text-slate-100 flex font-sans overflow-hidden"
         >
-            {/* Left Panel: Explorer Profile (Archival style) */}
+            {/* Left Panel: Explorer Profile */}
             <motion.div
                 variants={itemVariants}
                 className="w-[380px] h-full border-r border-white/10 bg-black/60 backdrop-blur-xl p-10 flex flex-col items-center shrink-0 shadow-2xl relative overflow-hidden"
             >
-                {/* Decorative Elements */}
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-indi-gold/50 to-transparent"></div>
                 <div className="absolute inset-0 opacity-5 pointer-events-none">
                     <img src="/assets/map.png" className="w-full h-full object-cover grayscale" />
                 </div>
 
-                {/* Avatar Section */}
                 <div className="relative mb-10">
                     <div className="absolute inset-0 bg-indi-gold/20 blur-3xl rounded-full scale-125 opacity-40"></div>
                     <div className="w-48 h-48 rounded-full border-4 border-indi-gold/30 p-2 relative z-10">
                         <div className="w-full h-full rounded-full border-2 border-indi-gold overflow-hidden shadow-[0_0_50px_rgba(245,158,11,0.2)] bg-slate-900">
-                            <img src="/assets/profile-pic (1).jpg" alt="Profile" className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" />
+                            <img src="/assets/profile-pic (1).jpg" alt="Profile" className="w-full h-full object-cover transition-all duration-700" />
                         </div>
                     </div>
                     <div className="absolute -bottom-2 right-4 bg-black border-2 border-indi-gold text-indi-gold font-pixel text-xl w-12 h-12 rounded-full flex items-center justify-center shadow-2xl z-20">
@@ -91,9 +97,39 @@ const ProfileScreen = ({ sites }: ProfileProps) => {
                         <StatBlock label="States Explored" value={stats.states} icon={<MapPin size={16} />} />
                         <StatBlock label="Accumulated Wisdom" value={stats.wisdom.toLocaleString()} icon={<Search size={16} />} />
                     </div>
+
+                    {/* Discovery Seals: Monument Thumbnails as Icons */}
+                    {verifiedSites.length > 0 && (
+                        <div className="mt-10 w-full text-left">
+                            <span className="text-[9px] font-pixel text-slate-500 uppercase tracking-widest block mb-4 border-b border-white/5 pb-2">Archival Seals</span>
+                            <div className="flex flex-wrap gap-3">
+                                {verifiedSites.slice(0, 4).map((site) => (
+                                    <div key={site.id} className="group relative">
+                                        <div className="w-12 h-12 rounded-lg border border-indi-gold/30 p-0.5 group-hover:border-indi-gold transition-all duration-300 rotate-3 group-hover:rotate-0">
+                                            <div className="w-full h-full rounded-md overflow-hidden bg-slate-900 border border-white/10">
+                                                <img
+                                                    src={site.image || '/assets/temple.jpg'}
+                                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                                    alt={site.name}
+                                                />
+                                            </div>
+                                        </div>
+                                        {/* Tooltip */}
+                                        <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-black border border-indi-gold/50 text-indi-gold text-[8px] font-pixel px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 pointer-events-none">
+                                            {site.name}
+                                        </div>
+                                    </div>
+                                ))}
+                                {verifiedSites.length > 4 && (
+                                    <div className="w-12 h-12 rounded-lg border border-dashed border-white/10 flex items-center justify-center text-slate-600 font-pixel text-[10px]">
+                                        +{verifiedSites.length - 4}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
                 </div>
 
-                {/* Progress bar at bottom of sidebar */}
                 <div className="mt-auto w-full pt-8 border-t border-white/5 z-10">
                     <div className="flex justify-between items-center mb-2 px-1">
                         <span className="text-[9px] font-pixel text-slate-500 uppercase tracking-widest text-indi-gold/60">Next enlightenment</span>
@@ -110,7 +146,7 @@ const ProfileScreen = ({ sites }: ProfileProps) => {
                 </div>
             </motion.div>
 
-            {/* Right Panel: Journey Record (Grantha style) */}
+            {/* Right Panel: Journey Record */}
             <div className="flex-1 h-full overflow-y-auto custom-scrollbar p-12 bg-black/20 backdrop-blur-sm">
                 <motion.div variants={itemVariants} className="max-w-5xl mx-auto">
                     <div className="flex items-center gap-4 mb-16">
@@ -121,32 +157,53 @@ const ProfileScreen = ({ sites }: ProfileProps) => {
                         </div>
                     </div>
 
-                    {/* Journey Sections by State */}
-                    <div className="space-y-16">
+                    <div className="space-y-6">
                         {Object.entries(journeyByState).length === 0 ? (
                             <div className="py-20 text-center opacity-30 italic font-serif text-2xl">
                                 "The first step has not yet been logged in the archive."
                             </div>
                         ) : (
-                            Object.entries(journeyByState).map(([state, sites], stateIndex) => (
-                                <section key={state} className="relative">
-                                    {/* State Header */}
-                                    <div className="flex items-center gap-6 mb-8">
-                                        <div className="h-px bg-gradient-to-r from-indi-gold/50 to-transparent flex-1" />
-                                        <h3 className="font-serif text-2xl text-indi-gold italic whitespace-nowrap">{state} Sector</h3>
-                                        <div className="h-px bg-gradient-to-l from-indi-gold/50 to-transparent flex-1" />
-                                    </div>
+                            Object.entries(journeyByState).map(([state, sites]) => (
+                                <section key={state} className="bg-white/[0.02] border border-white/5 rounded-2xl overflow-hidden">
+                                    <button
+                                        onClick={() => toggleState(state)}
+                                        className="w-full flex items-center gap-6 p-8 hover:bg-white/[0.03] transition-all group"
+                                    >
+                                        <div className="p-3 bg-indi-gold/10 rounded-xl text-indi-gold">
+                                            {expandedStates[state] ? <ChevronDown size={24} /> : <ChevronRight size={24} />}
+                                        </div>
+                                        <div className="flex-1 text-left">
+                                            <h3 className="font-serif text-3xl text-indi-gold italic">{state} Sector</h3>
+                                            <p className="text-[10px] font-pixel text-slate-500 uppercase tracking-widest mt-1">
+                                                {sites.length} Records Verified in this Territory
+                                            </p>
+                                        </div>
+                                        <div className="hidden group-hover:block font-pixel text-[10px] text-indi-gold tracking-widest">
+                                            {expandedStates[state] ? 'CLOSE RECORD' : 'OPEN RECORD'}
+                                        </div>
+                                    </button>
 
-                                    {/* Sites in this state */}
-                                    <div className="grid grid-cols-1 gap-4">
-                                        {sites.map((site, siteIndex) => (
-                                            <JourneyLogItem
-                                                key={site.id}
-                                                site={site}
-                                                index={siteIndex + stateIndex * 10}
-                                            />
-                                        ))}
-                                    </div>
+                                    <AnimatePresence>
+                                        {expandedStates[state] && (
+                                            <motion.div
+                                                initial={{ height: 0, opacity: 0 }}
+                                                animate={{ height: 'auto', opacity: 1 }}
+                                                exit={{ height: 0, opacity: 0 }}
+                                                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                                                className="overflow-hidden"
+                                            >
+                                                <div className="p-8 pt-0 grid grid-cols-1 gap-4">
+                                                    {sites.map((site, siteIndex) => (
+                                                        <JourneyLogItem
+                                                            key={site.id}
+                                                            site={site}
+                                                            index={siteIndex}
+                                                        />
+                                                    ))}
+                                                </div>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
                                 </section>
                             ))
                         )}
@@ -174,10 +231,10 @@ const JourneyLogItem = ({ site, index }: { site: HeritageSite, index: number }) 
             visible: { x: 0, opacity: 1, transition: { delay: index * 0.05 } }
         }}
         whileHover={{ x: 8, backgroundColor: 'rgba(255,191,0,0.03)' }}
-        className="flex items-center gap-8 p-6 bg-white/[0.02] border border-white/5 rounded-2xl transition-all group cursor-pointer"
+        className="flex items-center gap-8 p-6 bg-white/[0.01] border border-white/5 rounded-2xl transition-all group cursor-pointer"
     >
-        <div className="w-20 h-20 rounded-xl overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-700 bg-slate-900 shrink-0">
-            <img src={site.image || '/assets/temple.jpg'} className="w-full h-full object-cover opacity-60 group-hover:opacity-100" />
+        <div className="w-20 h-20 rounded-xl overflow-hidden transition-all duration-700 bg-slate-900 shrink-0">
+            <img src={site.image || '/assets/temple.jpg'} className="w-full h-full object-cover opacity-80 group-hover:opacity-100" />
         </div>
         <div className="flex-1">
             <div className="flex items-center gap-3 mb-1">
