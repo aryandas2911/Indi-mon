@@ -5,7 +5,7 @@ import { heritageSites } from '../data/heritageSites';
 import type { HeritageSite } from '../data/heritageSites';
 
 const HeritageDexScreen = ({ onOpenInfo }: { onOpenInfo: (site: HeritageSite) => void }) => {
-    const [activeFilter, setActiveFilter] = useState<'ALL' | 'DELHI' | 'KERALA' | 'RAJASTHAN' | 'UNDISCOVERED'>('ALL');
+    const [activeFilter, setActiveFilter] = useState<'ALL' | 'DELHI' | 'KERALA' | 'RAJASTHAN' | 'HAMPI' | 'UNDISCOVERED'>('ALL');
     const [searchQuery, setSearchQuery] = useState('');
 
     const filteredSites = useMemo(() => {

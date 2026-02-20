@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from 'react';
-import { Camera, Home, MapPin, X } from 'lucide-react';
+import { Camera, Home, MapPin, X, Users } from 'lucide-react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { heritageSites } from '../data/heritageSites';
@@ -207,13 +207,19 @@ const MapScreen = ({ onShowCamera }: MapScreenProps) => {
                                          </span>
                                      </div>
                                      
-                                     {/* Coordinates & Region label */}
+                                     {/* Coordinates, Region & Visitors */}
                                      <div className="flex items-center justify-between text-[10px] text-amber-900/60 font-pixel mb-2">
                                          <div className="flex items-center gap-1.5">
                                              <MapPin size={10} />
                                              <span>{selectedSite.coordinates[1].toFixed(4)}, {selectedSite.coordinates[0].toFixed(4)}</span>
                                          </div>
-                                         <span className="bg-amber-900/10 px-1.5 rounded">{selectedSite.region}</span>
+                                         <div className="flex items-center gap-3">
+                                             <span className="flex items-center gap-1">
+                                                 <Users size={10} />
+                                                 {selectedSite.visitorCount?.toLocaleString() || 0}
+                                             </span>
+                                             <span className="bg-amber-900/10 px-1.5 rounded">{selectedSite.region}</span>
+                                         </div>
                                      </div>
 
                                      <p className="text-xs text-amber-950 leading-relaxed font-serif line-clamp-2 md:line-clamp-3 mb-2">

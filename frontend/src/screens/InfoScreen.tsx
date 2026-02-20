@@ -59,7 +59,7 @@ const InfoScreen = ({ site, onBack }: InfoScreenProps) => {
                                 <div className="flex items-center gap-2 text-slate-300">
                                     <MapPin size={16} className="text-indi-gold" />
                                     <span className="font-pixel text-xs opacity-80">
-                                        {site.coordinates?.[0]?.toFixed(4) ?? '0.0000'}, {site.coordinates?.[1]?.toFixed(4) ?? '0.0000'}
+                                        Lat: {site.coordinates[1].toFixed(4)}, Lng: {site.coordinates[0].toFixed(4)}
                                     </span>
                                 </div>
                                 <div className="flex items-center gap-2 text-slate-300">
@@ -87,6 +87,28 @@ const InfoScreen = ({ site, onBack }: InfoScreenProps) => {
                             <p className="text-slate-400 leading-relaxed font-serif text-lg italic border-l-2 border-slate-700/50 pl-8 py-2 mb-6">
                                 "{site.description}"
                             </p>
+                            
+                            {site.history && (
+                                <div className="mt-8">
+                                    <h4 className="text-indi-gold font-pixel text-[10px] uppercase tracking-widest mb-3">Significance</h4>
+                                    <p className="text-slate-300 font-serif leading-relaxed">
+                                        {site.history}
+                                    </p>
+                                </div>
+                            )}
+
+                            {site.activities && site.activities.length > 0 && (
+                                <div className="mt-8">
+                                    <h4 className="text-indi-gold font-pixel text-[10px] uppercase tracking-widest mb-3">Rituals & Endeavors</h4>
+                                    <div className="flex flex-wrap gap-2">
+                                        {site.activities.map((activity, i) => (
+                                            <span key={i} className="px-3 py-1 bg-white/5 border border-white/10 rounded-lg text-xs text-slate-400 font-serif">
+                                                {activity}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
                         </section>
 
                         {/* Community Reviews Section */}
