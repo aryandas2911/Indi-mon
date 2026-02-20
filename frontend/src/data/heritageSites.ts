@@ -1,3 +1,14 @@
+export interface POI {
+    id: string;
+    name: string;
+    type: 'shop' | 'hotel' | 'restaurant' | 'activity';
+    description: string;
+    distance: string;
+    coordinates: [number, number]; // [longitude, latitude]
+    image?: string;
+    points: number;
+}
+
 export interface HeritageSite {
     id: string;
     name: string;
@@ -13,6 +24,8 @@ export interface HeritageSite {
     isRare?: boolean;
     teaser?: string;
     visitorCount?: number;
+    submittedBy?: string;
+    submissionDate?: string;
     comments?: {
         id: string;
         user: string;
@@ -21,6 +34,7 @@ export interface HeritageSite {
         image?: string;
         date: string;
     }[];
+    nearby?: POI[];
 }
 
 export const heritageSites: HeritageSite[] = [
@@ -90,7 +104,15 @@ export const heritageSites: HeritageSite[] = [
         region: 'Hampi',
         status: 'Pending',
         discoveredOn: '15 Oct',
-        visitorCount: 4500
+        visitorCount: 4500,
+        submittedBy: 'AryanX',
+        submissionDate: '14 Oct',
+        nearby: [
+            { id: 'n1', name: 'Mango Tree Restaurant', type: 'restaurant', description: 'Famous river-side dining with traditional thalis.', distance: '400m', coordinates: [76.4610, 15.3370], points: 150 },
+            { id: 'n2', name: 'Hampi Heritage Hotel', type: 'hotel', description: 'Luxury stay with temple view windows.', distance: '1.2km', coordinates: [76.4700, 15.3400], points: 300 },
+            { id: 'n3', name: 'Handicraft Bazaar', type: 'shop', description: 'Local artisans selling stone carvings and silk.', distance: '200m', coordinates: [76.4620, 15.3355], points: 100 },
+            { id: 'n4', name: 'Coracle River Crossing', type: 'activity', description: 'Traditional round boat ride across Tungabhadra.', distance: '600m', coordinates: [76.4650, 15.3390], points: 250 }
+        ]
     },
     {
         id: '4',
@@ -104,7 +126,43 @@ export const heritageSites: HeritageSite[] = [
         region: 'Delhi',
         status: 'Verified',
         discoveredOn: '20 Nov',
-        visitorCount: 15600
+        visitorCount: 15600,
+        submittedBy: 'Delhi_Explorer',
+        submissionDate: '18 Nov',
+        nearby: [
+            { id: 'n5', name: 'Nizamuddin Food Walk', type: 'activity', description: 'Kebab and biryani tasting tour of old Delhi lanes.', distance: '300m', coordinates: [77.2450, 28.5910], points: 200 },
+            { id: 'n6', name: 'Central Guest House', type: 'hotel', description: 'Budget friendly stay in the heart of the city.', distance: '800m', coordinates: [77.2400, 28.5950], points: 150 }
+        ]
+    },
+    {
+        id: 'p1',
+        name: 'Unnamed Stepwell',
+        description: 'A deep, multi-story stepwell discovered in the outskirts of Mehrauli. Features intricate geometric carvings.',
+        history: 'Likely dating to the Lodi period, though its specific builder remains undocumented.',
+        activities: ['Documentation', 'Depth Measurement'],
+        coordinates: [77.1844, 28.5211],
+        category: 'monument',
+        image: '/assets/temple.jpg',
+        region: 'Delhi',
+        status: 'Pending',
+        submittedBy: 'HistoryBuff99',
+        submissionDate: 'Yesterday',
+        visitorCount: 12
+    },
+    {
+        id: 'p2',
+        name: 'Abandoned Watchtower',
+        description: 'A strategic watchtower overlooking the ancient trade routes near Kumbhalgarh.',
+        history: 'Part of the outer defense perimeter of the Mewar kingdom.',
+        activities: ['Climbing', 'Panoramic View'],
+        coordinates: [73.5721, 25.1312],
+        category: 'fort',
+        image: '/assets/Kumbhalgarh-Fort.jpg',
+        region: 'Rajasthan',
+        status: 'Pending',
+        submittedBy: 'FortGuardian',
+        submissionDate: '3 days ago',
+        visitorCount: 5
     },
     {
         id: '5',
@@ -140,7 +198,13 @@ export const heritageSites: HeritageSite[] = [
         region: 'Delhi',
         status: 'Verified',
         discoveredOn: '10 Nov',
-        visitorCount: 7800
+        visitorCount: 7800,
+        nearby: [
+            { id: 'n7', name: 'Lodhi Art District', type: 'activity', description: 'Open-air gallery with massive murals across the Lodi Colony walls.', distance: '1.2km', coordinates: [77.2250, 28.5820], points: 250 },
+            { id: 'n8', name: 'Khan Market', type: 'activity', description: 'Premium lifestyle hub known for its bookstores and boutique cafes.', distance: '800m', coordinates: [77.2270, 28.6010], points: 150 },
+            { id: 'n9', name: 'Full Circle Bookstore', type: 'shop', description: 'Iconic bookstore inside Khan Market with a cozy cafe upstairs.', distance: '850m', coordinates: [77.2272, 28.6012], points: 100 },
+            { id: 'n10', name: 'The Lodhi Hotel', type: 'hotel', description: 'Ultra-luxury stay known for its private plunge pools and modern architecture.', distance: '1.5km', coordinates: [77.2380, 28.5920], points: 400 }
+        ]
     },
     {
         id: '7',

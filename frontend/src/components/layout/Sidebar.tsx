@@ -1,10 +1,10 @@
-import { Map, Scroll, Award, Settings, Briefcase } from 'lucide-react';
+import { Map, Scroll, ShieldCheck, Settings } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { motion } from 'framer-motion';
 
 interface SidebarProps {
     activeScreen: string;
-    setScreen: (screen: 'LANDING' | 'AUTH' | 'MAP' | 'DEX' | 'LEADERBOARD' | 'PROFILE' | 'SETTINGS') => void;
+    setScreen: (screen: 'LANDING' | 'AUTH' | 'MAP' | 'DEX' | 'VERIFIER' | 'PROFILE' | 'SETTINGS') => void;
 }
 
 const Sidebar = ({ activeScreen, setScreen }: SidebarProps) => {
@@ -13,14 +13,14 @@ const Sidebar = ({ activeScreen, setScreen }: SidebarProps) => {
 
     const containerVariants: any = {
         hidden: { x: -20, opacity: 0 },
-        visible: { 
-            x: 0, 
+        visible: {
+            x: 0,
             opacity: 1,
-            transition: { 
+            transition: {
                 staggerChildren: 0.1,
                 when: "beforeChildren",
                 duration: 0.6,
-                ease: "easeOut" 
+                ease: "easeOut"
             }
         }
     };
@@ -31,16 +31,16 @@ const Sidebar = ({ activeScreen, setScreen }: SidebarProps) => {
     };
 
     return (
-        <motion.div 
+        <motion.div
             initial="hidden"
             animate="visible"
             variants={containerVariants}
             className="w-44 h-full bg-[#161b22] border-r border-[#30363d] flex flex-col items-center py-6 z-20 shrink-0"
         >
             {/* Profile Avatar / Top */}
-            <motion.div 
+            <motion.div
                 variants={itemVariants}
-                className="mb-8 flex flex-col items-center cursor-pointer group" 
+                className="mb-8 flex flex-col items-center cursor-pointer group"
                 onClick={() => setScreen('PROFILE')}
             >
                 <div className="w-16 h-16 rounded-full border-2 border-indi-gold p-0.5 mb-2 relative group-hover:scale-105 transition-transform duration-300">
@@ -71,17 +71,10 @@ const Sidebar = ({ activeScreen, setScreen }: SidebarProps) => {
                     variants={itemVariants}
                 />
                 <NavItem
-                    icon={<Award size={20} />}
-                    label="Leaderboard"
-                    isActive={activeScreen === 'LEADERBOARD'}
-                    onClick={() => setScreen('LEADERBOARD')}
-                    variants={itemVariants}
-                />
-                <NavItem
-                    icon={<Briefcase size={20} />}
-                    label="Inventory"
-                    isActive={activeScreen === 'INVENTORY'}
-                    onClick={() => { }}
+                    icon={<ShieldCheck size={20} />}
+                    label="Verifier Console"
+                    isActive={activeScreen === 'VERIFIER'}
+                    onClick={() => setScreen('VERIFIER')}
                     variants={itemVariants}
                 />
             </div>
@@ -126,7 +119,7 @@ const NavItem = ({ icon, label, isActive, onClick, variants }: NavItemProps) => 
     >
         {/* Left Active Indicator */}
         {isActive && (
-            <motion.div 
+            <motion.div
                 layoutId="nav-active"
                 className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-indi-gold rounded-r shadow-[0_0_10px_rgba(245,158,11,0.5)]"
             />

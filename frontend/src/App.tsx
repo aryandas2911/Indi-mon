@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import GameContainer from './components/layout/GameContainer';
 import Sidebar from './components/layout/Sidebar';
 import ProfileScreen from './screens/ProfileScreen';
-import LeaderboardScreen from './screens/LeaderboardScreen';
+import VerifierConsoleScreen, { VerificationModal } from './screens/VerifierConsoleScreen';
 import HeritageDexScreen from './screens/HeritageDexScreen';
 import CameraScreen from './screens/CameraScreen';
 import InfoScreen from './screens/InfoScreen';
@@ -12,6 +12,7 @@ import SettingsScreen from './screens/SettingsScreen';
 import { useAuth } from './hooks/useAuth';
 import { Info } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { heritageSites } from './data/heritageSites';
 import type { HeritageSite } from './data/heritageSites';
 
 const INFO_SLIDES = [
@@ -56,21 +57,23 @@ const InfoCarousel = () => {
 };
 
 export default function App() {
-  const [screen, setScreen] = useState<'LANDING' | 'AUTH' | 'MAP' | 'DEX' | 'LEADERBOARD' | 'PROFILE' | 'SETTINGS'>('LANDING');
+  const [sites, setSites] = useState<HeritageSite[]>(heritageSites);
+  const [screen, setScreen] = useState<'LANDING' | 'AUTH' | 'MAP' | 'DEX' | 'VERIFIER' | 'PROFILE' | 'SETTINGS'>('LANDING');
   const [showCamera, setShowCamera] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
+  const [reviewSite, setReviewSite] = useState<HeritageSite | null>(null);
   const [selectedSite, setSelectedSite] = useState<HeritageSite | null>(null);
   const { user, loading } = useAuth();
 
   const renderScreen = () => {
     switch (screen) {
-      case 'PROFILE': return <ProfileScreen />;
-      case 'LEADERBOARD': return <LeaderboardScreen />;
-      case 'DEX': return <HeritageDexScreen onOpenInfo={(site) => {
+      case 'PROFILE': return <ProfileScreen sites={sites} />;
+      case 'VERIFIER': return <VerifierConsoleScreen sites={sites} onReviewSite={setReviewSite} />;
+      case 'DEX': return <HeritageDexScreen sites={sites} onOpenInfo={(site) => {
         setSelectedSite(site);
         setShowInfo(true);
       }} />;
-      case 'MAP': return <MapScreen onShowCamera={() => setShowCamera(true)} />;
+      case 'MAP': return <MapScreen sites={sites} onShowCamera={() => setShowCamera(true)} />;
       case 'SETTINGS': return <SettingsScreen />;
       default: return null;
     }
@@ -118,11 +121,28 @@ export default function App() {
         </div>
       )}
 
+      <AnimatePresence>
+        {reviewSite && (
+          <VerificationModal
+            site={reviewSite}
+            onClose={() => setReviewSite(null)}
+            onVerify={() => {
+              const updatedSites = sites.map(s =>
+                s.id === reviewSite.id ? { ...s, status: 'Verified' as const, discoveredOn: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) } : s
+              );
+              setSites(updatedSites);
+              setReviewSite(null);
+            }}
+            onReject={() => setReviewSite(null)}
+          />
+        )}
+      </AnimatePresence>
+
       {screen === 'LANDING' ? (
         <div
           className="w-full h-full flex items-center justify-center text-white relative overflow-hidden cursor-pointer group"
           style={{
-            background: `linear-gradient(rgba(30, 15, 5, 0.18), rgba(30, 15, 5, 0.18)), url("/assets/map.png")`,
+            backgroundImage: `linear-gradient(rgba(30, 15, 5, 0.18), rgba(30, 15, 5, 0.18)), url("/assets/map.png")`,
             backgroundColor: '#2D1B15',
             backgroundSize: 'cover',
             backgroundBlendMode: 'multiply',
@@ -335,7 +355,7 @@ export default function App() {
         <div
           className="w-full h-full flex relative"
           style={{
-            background: `linear-gradient(rgba(40, 20, 5, 0.65), rgba(40, 20, 5, 0.65)), url("/assets/map.png")`,
+            backgroundImage: `linear-gradient(rgba(40, 20, 5, 0.65), rgba(40, 20, 5, 0.65)), url("/assets/map.png")`,
             backgroundColor: '#1a0e06',
             backgroundSize: 'cover',
             backgroundPosition: 'center',

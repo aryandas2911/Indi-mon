@@ -1,11 +1,10 @@
 import { Search, Map, Info, Clock, CheckCircle2, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useMemo, useEffect } from 'react';
-import { heritageSites as staticHeritageSites } from '../data/heritageSites';
 import type { HeritageSite } from '../data/heritageSites';
 import { supabase } from '../lib/supabaseClient';
 
-const HeritageDexScreen = ({ onOpenInfo }: { onOpenInfo: (site: HeritageSite) => void }) => {
+const HeritageDexScreen = ({ sites, onOpenInfo }: { sites: HeritageSite[], onOpenInfo: (site: HeritageSite) => void }) => {
     const [activeFilter, setActiveFilter] = useState<'ALL' | 'DELHI' | 'KERALA' | 'RAJASTHAN' | 'HAMPI' | 'UNDISCOVERED'>('ALL');
     const [searchQuery, setSearchQuery] = useState('');
     const [dynamicSites, setDynamicSites] = useState<HeritageSite[]>([]);
@@ -38,8 +37,8 @@ const HeritageDexScreen = ({ onOpenInfo }: { onOpenInfo: (site: HeritageSite) =>
     }, []);
 
     const allSites = useMemo(() => {
-        return [...staticHeritageSites, ...dynamicSites];
-    }, [dynamicSites]);
+        return [...sites, ...dynamicSites];
+    }, [sites, dynamicSites]);
 
     const filteredSites = useMemo(() => {
         return allSites.filter(site => {
@@ -50,8 +49,7 @@ const HeritageDexScreen = ({ onOpenInfo }: { onOpenInfo: (site: HeritageSite) =>
             }
 
             if (activeFilter === 'ALL') {
-                // Show discovered sites, but we'll include undiscovered in the UI differently
-                return site.status !== 'Undiscovered' && matchesSearch;
+                return site.status === 'Verified' && matchesSearch;
             }
 
             const regionFilterMap: Record<string, string> = {
@@ -61,7 +59,7 @@ const HeritageDexScreen = ({ onOpenInfo }: { onOpenInfo: (site: HeritageSite) =>
                 'HAMPI': 'Hampi'
             };
 
-            return site.region === regionFilterMap[activeFilter] && site.status !== 'Undiscovered' && matchesSearch;
+            return site.region === regionFilterMap[activeFilter] && site.status === 'Verified' && matchesSearch;
         });
     }, [activeFilter, searchQuery, allSites]);
 
