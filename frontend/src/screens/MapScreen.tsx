@@ -6,8 +6,8 @@ interface MapScreenProps {
 
 const MapScreen = ({ onShowCamera }: MapScreenProps) => {
     return (
-        <div className="w-full h-full bg-[#1e293b] relative flex items-center justify-center overflow-hidden">
-            <div className="absolute inset-0 bg-[url('/assets/map.png')] bg-cover bg-center opacity-40"></div>
+        <div className="w-full h-full relative flex items-center justify-center overflow-hidden">
+            <div className="absolute inset-0 bg-[url('/assets/map.png')] bg-cover bg-center opacity-95"></div>
 
             {/* Map UI Overlay */}
             <div className="absolute top-6 right-6 flex gap-3">

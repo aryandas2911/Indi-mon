@@ -7,10 +7,10 @@ const HeritageDexScreen = () => {
         <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="w-full h-full bg-[#0b101b] text-slate-100 flex font-sans overflow-hidden"
+            className="w-full h-full bg-transparent text-slate-100 flex font-sans overflow-hidden"
         >
             {/* Left Panel: Search & Filters (Fixed width) */}
-            <div className="w-[320px] h-full border-r border-white/5 bg-[#0f172a] flex flex-col z-10 shrink-0 shadow-xl">
+            <div className="w-[320px] h-full border-r border-white/10 bg-black/50 backdrop-blur-md flex flex-col z-10 shrink-0 shadow-xl">
                 <div className="p-6 border-b border-white/5">
                     <h2 className="font-serif text-2xl tracking-wide text-indi-gold mb-1">Grantha</h2>
                     <p className="text-[10px] text-slate-500 uppercase tracking-widest">Heritage-Dex System</p>
@@ -54,7 +54,7 @@ const HeritageDexScreen = () => {
             </div>
 
             {/* Right Panel: Content Grid (Scrollable) */}
-            <div className="flex-1 bg-[#0b101b] p-8 overflow-y-auto custom-scrollbar">
+            <div className="flex-1 bg-black/20 backdrop-blur-sm p-8 overflow-y-auto custom-scrollbar">
                 <div className="grid grid-cols-2 gap-6 pb-12">
                     <DexCard
                         title="The Stone Chariot"
