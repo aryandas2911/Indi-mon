@@ -1,38 +1,51 @@
-import { Award, Leaf, Droplet, Lock, Compass, Medal, Castle } from 'lucide-react';
+import { MapPin, History, Search } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../hooks/useAuth';
+import type { HeritageSite } from '../data/heritageSites';
+import { useMemo } from 'react';
 
-const ProfileScreen = () => {
+interface ProfileProps {
+    sites: HeritageSite[];
+}
+
+const ProfileScreen = ({ sites }: ProfileProps) => {
     const { profile } = useAuth();
     const displayName = profile?.full_name || 'Explorer';
-    const organization = profile?.organization || '';
 
-    const containerVariants: any = {
+    const verifiedSites = useMemo(() => sites.filter(s => s.status === 'Verified'), [sites]);
+
+    const stats = useMemo(() => {
+        const states = new Set(verifiedSites.map(s => s.region));
+        return {
+            monuments: verifiedSites.length,
+            states: states.size,
+            wisdom: verifiedSites.length * 450 // Simplified logic
+        };
+    }, [verifiedSites]);
+
+    const journeyByState = useMemo(() => {
+        const grouped: Record<string, HeritageSite[]> = {};
+        verifiedSites.forEach(site => {
+            if (!grouped[site.region]) grouped[site.region] = [];
+            grouped[site.region].push(site);
+        });
+        return grouped;
+    }, [verifiedSites]);
+
+    const containerVariants = {
         hidden: { opacity: 0 },
         visible: {
             opacity: 1,
-            transition: {
-                staggerChildren: 0.15,
-                delayChildren: 0.2
-            }
+            transition: { staggerChildren: 0.1, delayChildren: 0.2 }
         }
     };
 
-    const sectionVariants: any = {
+    const itemVariants = {
         hidden: { y: 20, opacity: 0 },
         visible: {
             y: 0,
             opacity: 1,
-            transition: { duration: 0.6, ease: "easeOut" }
-        }
-    };
-
-    const statsVariants: any = {
-        hidden: { scale: 0.95, opacity: 0 },
-        visible: {
-            scale: 1,
-            opacity: 1,
-            transition: { duration: 0.5, ease: "easeOut" }
+            transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } as any
         }
     };
 
@@ -41,105 +54,102 @@ const ProfileScreen = () => {
             initial="hidden"
             animate="visible"
             variants={containerVariants}
-            className="w-full h-full bg-[#0b101b] text-slate-100 flex font-sans overflow-hidden"
+            className="w-full h-full bg-transparent text-slate-100 flex font-sans overflow-hidden"
         >
-            {/* Left Column: Stats & Avatar (Fixed width) */}
+            {/* Left Panel: Explorer Profile (Archival style) */}
             <motion.div
-                variants={sectionVariants}
-                className="w-1/3 min-w-[300px] h-full border-r border-white/5 bg-[#0f172a]/50 p-8 flex flex-col items-center justify-center relative"
+                variants={itemVariants}
+                className="w-[380px] h-full border-r border-white/10 bg-black/60 backdrop-blur-xl p-10 flex flex-col items-center shrink-0 shadow-2xl relative overflow-hidden"
             >
-                <motion.div
-                    variants={statsVariants}
-                    whileHover={{ scale: 1.02 }}
-                    className="relative group cursor-pointer mb-6"
-                >
-                    {/* Glow Effect */}
-                    <div className="absolute inset-0 bg-indi-gold/20 blur-2xl rounded-full scale-110 opacity-50 group-hover:opacity-100 transition-opacity duration-500"></div>
+                {/* Decorative Elements */}
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-indi-gold/50 to-transparent"></div>
+                <div className="absolute inset-0 opacity-5 pointer-events-none">
+                    <img src="/assets/map.png" className="w-full h-full object-cover grayscale" />
+                </div>
 
-                    <div className="w-40 h-40 rounded-full border-[4px] border-indi-gold overflow-hidden bg-gray-800 shadow-[0_0_40px_rgba(245,158,11,0.15)] relative z-10 transition-all duration-500 group-hover:border-indi-gold/80">
-                        <img src="/assets/profile-pic (1).jpg" alt="Profile" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                {/* Avatar Section */}
+                <div className="relative mb-10">
+                    <div className="absolute inset-0 bg-indi-gold/20 blur-3xl rounded-full scale-125 opacity-40"></div>
+                    <div className="w-48 h-48 rounded-full border-4 border-indi-gold/30 p-2 relative z-10">
+                        <div className="w-full h-full rounded-full border-2 border-indi-gold overflow-hidden shadow-[0_0_50px_rgba(245,158,11,0.2)] bg-slate-900">
+                            <img src="/assets/profile-pic (1).jpg" alt="Profile" className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" />
+                        </div>
                     </div>
-
-                    <motion.div
-                        initial={{ scale: 0, rotate: -20 }}
-                        animate={{ scale: 1, rotate: 0 }}
-                        transition={{ delay: 0.5, type: "spring", stiffness: 260, damping: 20 }}
-                        className="absolute -bottom-3 -right-0 bg-[#0f172a] text-indi-gold font-bold rounded-full w-12 h-12 flex items-center justify-center border-2 border-indi-gold font-pixel text-2xl shadow-[0_4px_10px_rgba(0,0,0,0.5)] z-20"
-                    >
+                    <div className="absolute -bottom-2 right-4 bg-black border-2 border-indi-gold text-indi-gold font-pixel text-xl w-12 h-12 rounded-full flex items-center justify-center shadow-2xl z-20">
                         42
-                    </motion.div>
-                </motion.div>
-
-                <motion.h2 variants={sectionVariants} className="text-5xl font-serif text-indi-gold tracking-wide drop-shadow-md text-center truncate w-full px-4">{displayName}</motion.h2>
-                <motion.p variants={sectionVariants} className="text-slate-400 font-serif text-sm tracking-[0.3em] uppercase mt-2 border-b border-indi-gold/30 pb-2">Grand Sage</motion.p>
-                {organization && (
-                    <motion.p variants={sectionVariants} className="text-slate-500 text-[10px] uppercase tracking-[0.2em] mt-3 opacity-60 italic">{organization}</motion.p>
-                )}
-
-                <motion.div variants={sectionVariants} className="mt-8 w-full max-w-[240px]">
-                    <div className="flex justify-between text-[10px] uppercase tracking-wider text-slate-500 mb-2">
-                        <span>Next Enlightenment</span>
-                        <span className="text-indi-gold">12.4k / 15k</span>
                     </div>
-                    <div className="h-2.5 bg-slate-800 rounded-full overflow-hidden border border-white/5 p-[1px]">
+                </div>
+
+                <div className="text-center z-10 w-full px-4">
+                    <h2 className="text-4xl font-serif text-indi-gold tracking-wide mb-1 break-words">{displayName}</h2>
+                    <div className="inline-block px-3 py-1 border border-indi-gold/20 bg-indi-gold/5 rounded-full mb-8">
+                        <span className="text-[10px] text-indi-gold font-bold uppercase tracking-[0.3em]">Grand Sage chronicler</span>
+                    </div>
+
+                    <div className="space-y-6 w-full text-left">
+                        <StatBlock label="Monuments Archived" value={stats.monuments} icon={<History size={16} />} />
+                        <StatBlock label="States Explored" value={stats.states} icon={<MapPin size={16} />} />
+                        <StatBlock label="Accumulated Wisdom" value={stats.wisdom.toLocaleString()} icon={<Search size={16} />} />
+                    </div>
+                </div>
+
+                {/* Progress bar at bottom of sidebar */}
+                <div className="mt-auto w-full pt-8 border-t border-white/5 z-10">
+                    <div className="flex justify-between items-center mb-2 px-1">
+                        <span className="text-[9px] font-pixel text-slate-500 uppercase tracking-widest text-indi-gold/60">Next enlightenment</span>
+                        <span className="text-[10px] font-pixel text-indi-gold">82%</span>
+                    </div>
+                    <div className="h-1 bg-white/5 rounded-full overflow-hidden border border-white/5">
                         <motion.div
                             initial={{ width: 0 }}
                             animate={{ width: "82%" }}
-                            transition={{ duration: 1.5, ease: "circOut", delay: 0.8 }}
-                            className="h-full bg-gradient-to-r from-amber-800 via-amber-600 to-indi-gold shadow-[0_0_15px_rgba(245,158,11,0.4)] rounded-full"
-                        ></motion.div>
+                            transition={{ duration: 1.5, ease: "circOut", delay: 1 }}
+                            className="h-full bg-indi-gold shadow-[0_0_10px_rgba(245,158,11,0.5)]"
+                        />
                     </div>
-                </motion.div>
+                </div>
             </motion.div>
 
-            {/* Right Column: Content (Scrollable) */}
-            <div className="flex-1 h-full overflow-y-auto custom-scrollbar p-8">
-
-                {/* Stamps Grid */}
-                <motion.div variants={sectionVariants} className="mb-10">
-                    <div className="flex items-center gap-3 mb-8">
-                        <h3 className="text-indi-gold font-serif text-lg tracking-widest uppercase border-b border-indi-gold/20 pb-1">Stamps of Merit</h3>
-                        <div className="h-[px] bg-gradient-to-r from-white/10 to-transparent flex-1"></div>
+            {/* Right Panel: Journey Record (Grantha style) */}
+            <div className="flex-1 h-full overflow-y-auto custom-scrollbar p-12 bg-black/20 backdrop-blur-sm">
+                <motion.div variants={itemVariants} className="max-w-5xl mx-auto">
+                    <div className="flex items-center gap-4 mb-16">
+                        <History size={32} className="text-indi-gold opacity-50" />
+                        <div>
+                            <h1 className="text-5xl font-serif text-slate-200">The Eternal Journey</h1>
+                            <p className="text-xs font-pixel text-indi-gold/60 uppercase tracking-[0.4em] mt-2">Personal Records of the Great Mapping</p>
+                        </div>
                     </div>
 
-                    <div className="grid grid-cols-5 gap-6">
-                        <StampItem icon={<Leaf size={28} />} label="Forest Bound" active index={0} />
-                        <StampItem icon={<Castle size={26} />} label="Citadel Key" active index={1} />
-                        <StampItem icon={<Droplet size={26} />} label="Ganga Blessed" active index={2} />
-                        <StampItem icon={<Award size={26} />} label="Royal Guard" active index={3} />
-                        <StampItem icon={<Lock size={22} />} label="Unknown" active={false} index={4} />
-                    </div>
-                </motion.div>
+                    {/* Journey Sections by State */}
+                    <div className="space-y-16">
+                        {Object.entries(journeyByState).length === 0 ? (
+                            <div className="py-20 text-center opacity-30 italic font-serif text-2xl">
+                                "The first step has not yet been logged in the archive."
+                            </div>
+                        ) : (
+                            Object.entries(journeyByState).map(([state, sites], stateIndex) => (
+                                <section key={state} className="relative">
+                                    {/* State Header */}
+                                    <div className="flex items-center gap-6 mb-8">
+                                        <div className="h-px bg-gradient-to-r from-indi-gold/50 to-transparent flex-1" />
+                                        <h3 className="font-serif text-2xl text-indi-gold italic whitespace-nowrap">{state} Sector</h3>
+                                        <div className="h-px bg-gradient-to-l from-indi-gold/50 to-transparent flex-1" />
+                                    </div>
 
-                {/* Voyage Logs */}
-                <motion.div variants={sectionVariants}>
-                    <div className="flex items-center gap-3 mb-8">
-                        <h3 className="text-indi-gold font-serif text-lg tracking-widest uppercase border-b border-indi-gold/20 pb-1">Voyage Logs</h3>
-                        <div className="h-[px] bg-gradient-to-r from-white/10 to-transparent flex-1"></div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                        <LogItem
-                            icon={<Compass size={22} />}
-                            title="Discovered Ancient Shrine of Hampi"
-                            subtitle="Added 450 Wisdom to the record • 2 hrs ago"
-                            color="rose"
-                            index={0}
-                        />
-                        <LogItem
-                            icon={<Medal size={22} />}
-                            title="Reached Reputation Level 'Noble'"
-                            subtitle="Honored by the Southern Tribes • Yesterday"
-                            color="amber"
-                            index={1}
-                        />
-                        <LogItem
-                            icon={<Compass size={22} />}
-                            title="Mapped the Lost Stepwell"
-                            subtitle="Rajasthan Sector • 3 days ago"
-                            color="blue"
-                            index={2}
-                        />
+                                    {/* Sites in this state */}
+                                    <div className="grid grid-cols-1 gap-4">
+                                        {sites.map((site, siteIndex) => (
+                                            <JourneyLogItem
+                                                key={site.id}
+                                                site={site}
+                                                index={siteIndex + stateIndex * 10}
+                                            />
+                                        ))}
+                                    </div>
+                                </section>
+                            ))
+                        )}
                     </div>
                 </motion.div>
             </div>
@@ -147,49 +157,40 @@ const ProfileScreen = () => {
     );
 };
 
-const StampItem = ({ icon, label, active, index }: { icon: React.ReactNode, label: string, active: boolean, index: number }) => (
-    <motion.div
-        variants={{
-            hidden: { scale: 0.8, opacity: 0 },
-            visible: { scale: 1, opacity: 1, transition: { delay: 0.1 * index } }
-        }}
-        whileHover={{ y: -5, scale: 1.05 }}
-        className={`flex flex-col items-center gap-4 group cursor-pointer ${active ? 'opacity-100' : 'opacity-40'}`}
-    >
-        <div className={`w-20 h-20 rounded-xl border-2 transition-all duration-300 ${active ? 'border-amber-700/50 bg-gradient-to-br from-amber-900/20 to-transparent' : 'border-slate-700 bg-slate-800/30'} flex items-center justify-center ${active ? 'text-amber-500 shadow-[0_0_20px_rgba(245,158,11,0.1)] group-hover:shadow-[0_0_30px_rgba(245,158,11,0.2)] group-hover:border-indi-gold' : 'text-slate-600'} `}>
-            {icon}
+const StatBlock = ({ label, value, icon }: { label: string, value: string | number, icon: React.ReactNode }) => (
+    <div className="group">
+        <div className="flex items-center gap-3 text-slate-500 mb-1">
+            <span className="text-indi-gold opacity-50">{icon}</span>
+            <span className="text-[9px] font-pixel uppercase tracking-widest">{label}</span>
         </div>
-        <span className={`text-[10px] uppercase font-bold text-center leading-tight tracking-widest transition-colors duration-300 ${active ? 'text-amber-500/80 group-hover:text-indi-gold' : 'text-slate-600'}`}>{label}</span>
-    </motion.div>
+        <div className="text-2xl font-serif text-slate-200 group-hover:text-indi-gold transition-colors">{value}</div>
+    </div>
 );
 
-const LogItem = ({ icon, title, subtitle, color, index }: { icon: React.ReactNode, title: string, subtitle: string, color: string, index: number }) => {
-    const colors: any = {
-        rose: 'text-rose-500 bg-rose-950/30 border-rose-900/50 group-hover:border-rose-500/50',
-        amber: 'text-amber-500 bg-amber-950/30 border-amber-900/50 group-hover:border-amber-500/50',
-        blue: 'text-sky-500 bg-sky-950/30 border-sky-900/50 group-hover:border-sky-500/50',
-    }
-    return (
-        <motion.div
-            variants={{
-                hidden: { x: 20, opacity: 0 },
-                visible: { x: 0, opacity: 1, transition: { delay: 0.1 * index } }
-            }}
-            whileHover={{ x: 5 }}
-            className="bg-[#131b2e]/40 backdrop-blur-sm p-5 rounded-xl border border-white/5 flex gap-5 items-center shadow-sm hover:bg-[#1a2339]/60 transition-all cursor-pointer group hover:border-indi-gold/20 relative overflow-hidden"
-        >
-            <div className="absolute inset-0 opacity-[0.03] pointer-events-none group-hover:opacity-[0.06] transition-opacity">
-                <img src="/assets/temple.jpg" className="w-full h-full object-cover grayscale" />
+const JourneyLogItem = ({ site, index }: { site: HeritageSite, index: number }) => (
+    <motion.div
+        variants={{
+            hidden: { x: 20, opacity: 0 },
+            visible: { x: 0, opacity: 1, transition: { delay: index * 0.05 } }
+        }}
+        whileHover={{ x: 8, backgroundColor: 'rgba(255,191,0,0.03)' }}
+        className="flex items-center gap-8 p-6 bg-white/[0.02] border border-white/5 rounded-2xl transition-all group cursor-pointer"
+    >
+        <div className="w-20 h-20 rounded-xl overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-700 bg-slate-900 shrink-0">
+            <img src={site.image || '/assets/temple.jpg'} className="w-full h-full object-cover opacity-60 group-hover:opacity-100" />
+        </div>
+        <div className="flex-1">
+            <div className="flex items-center gap-3 mb-1">
+                <span className="font-pixel text-[9px] text-indi-gold/40">{site.discoveredOn} · Log #{site.id}</span>
+                <span className="h-px w-8 bg-white/10" />
+                <span className="font-pixel text-[9px] text-slate-500 uppercase tracking-widest">{site.category}</span>
             </div>
-            <div className={`w-12 h-12 rounded-full border transition-all duration-300 ${colors[color] || colors.amber} flex items-center justify-center shrink-0 group-hover:scale-110 shadow-lg`}>
-                {icon}
-            </div>
-            <div className="relative z-10">
-                <h4 className="font-serif text-lg text-slate-200 group-hover:text-indi-gold transition-colors">{title}</h4>
-                <p className="text-xs text-slate-500 uppercase tracking-wider mt-1">{subtitle}</p>
-            </div>
-        </motion.div>
-    );
-};
+            <h4 className="font-serif text-2xl text-slate-200 group-hover:text-indi-gold transition-colors">{site.name}</h4>
+        </div>
+        <div className="opacity-0 group-hover:opacity-100 transition-opacity text-indi-gold font-pixel text-[10px] tracking-widest">
+            VIEW RECORD →
+        </div>
+    </motion.div>
+);
 
 export default ProfileScreen;

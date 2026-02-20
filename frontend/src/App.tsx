@@ -67,7 +67,7 @@ export default function App() {
 
   const renderScreen = () => {
     switch (screen) {
-      case 'PROFILE': return <ProfileScreen />;
+      case 'PROFILE': return <ProfileScreen sites={sites} />;
       case 'VERIFIER': return <VerifierConsoleScreen sites={sites} onReviewSite={setReviewSite} />;
       case 'DEX': return <HeritageDexScreen sites={sites} onOpenInfo={(site) => {
         setSelectedSite(site);
