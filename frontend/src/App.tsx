@@ -102,17 +102,17 @@ export default function App() {
         <div
           className="w-full h-full flex items-center justify-center text-white relative overflow-hidden cursor-pointer group"
           style={{
-            background: `linear-gradient(rgba(30, 15, 5, 0.18), rgba(30, 15, 5, 0.18)), url("/assets/map.png")`,
-            backgroundColor: '#2D1B15',
+            background: `linear-gradient(rgba(240, 230, 210, 0.05), rgba(240, 230, 210, 0.05)), url("/assets/map.png")`,
+            backgroundColor: '#8d6e63',
             backgroundSize: 'cover',
             backgroundBlendMode: 'multiply',
-            filter: 'none',
+            filter: 'brightness(1.2) contrast(1.1) saturate(1.1)',
           }}
           onClick={() => setScreen(user ? 'PROFILE' : 'AUTH')}
         >
-          {/* Warm sepia vignette overlay */}
+          {/* Warm sepia vignette overlay - Reduced opacity */}
           <div className="absolute inset-0 pointer-events-none" style={{
-            background: 'radial-gradient(ellipse at center, transparent 40%, rgba(30, 10, 0, 0.55) 100%)'
+            background: 'radial-gradient(ellipse at center, transparent 50%, rgba(30, 10, 0, 0.5) 100%)'
           }} />
 
           {/* Subtle Stone Block Texture Overlay */}
@@ -245,11 +245,13 @@ export default function App() {
             </div>
 
             {/* Info Carousel with heritage border */}
-            <div className="h-20 mb-12 flex items-center justify-center text-center max-w-lg px-4 backdrop-blur-sm rounded-xl"
+            <div className="h-24 mb-12 flex items-center justify-center text-center max-w-lg px-6 backdrop-blur-md rounded-2xl relative overflow-hidden"
               style={{
-                background: 'rgba(30, 10, 0, 0.45)',
-                border: '1px solid rgba(245,158,11,0.25)',
-                boxShadow: '0 0 20px rgba(245,158,11,0.08), inset 0 0 20px rgba(245,158,11,0.04)'
+                background: 'linear-gradient(rgba(30, 10, 0, 0.6), rgba(30, 10, 0, 0.6)), url("/assets/meenakshisunset.webp")',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                border: '1px solid rgba(245,158,11,0.3)',
+                boxShadow: '0 0 30px rgba(245,158,11,0.1), inset 0 0 30px rgba(245,158,11,0.1)'
               }}>
               <InfoCarousel />
             </div>
@@ -313,12 +315,12 @@ export default function App() {
         <div
           className="w-full h-full flex relative"
           style={{
-            background: `linear-gradient(rgba(60, 28, 8, 0.82), rgba(60, 28, 8, 0.82)), url("/assets/map.png")`,
+            background: `linear-gradient(rgba(40, 20, 5, 0.65), rgba(40, 20, 5, 0.65)), url("/assets/map.png")`,
             backgroundColor: '#1a0e06',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             backgroundBlendMode: 'multiply',
-            filter: 'sepia(0.25) brightness(0.92)',
+            filter: 'sepia(0.1) brightness(0.95)',
           }}
         >
           {/* Warm radial vignette */}

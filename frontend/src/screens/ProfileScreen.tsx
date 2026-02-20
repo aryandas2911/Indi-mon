@@ -15,7 +15,8 @@ const ProfileScreen = () => {
         >
             {/* Left Column: Stats & Avatar (Fixed width) */}
             <div className="w-1/3 min-w-[300px] h-full border-r border-white/10 bg-black/40 backdrop-blur-sm p-8 flex flex-col items-center justify-center relative">
-                <div className="relative group cursor-pointer mb-6">
+
+                <div className="relative group cursor-pointer mb-6 z-10">
                     {/* Glow Effect */}
                     <div className="absolute inset-0 bg-indi-gold/20 blur-xl rounded-full scale-110"></div>
 
@@ -111,7 +112,10 @@ const LogItem = ({ icon, title, subtitle, color }: { icon: React.ReactNode, titl
         blue: 'text-sky-500 bg-sky-950/30 border-sky-900/50',
     }
     return (
-        <div className="bg-[#131b2e] p-5 rounded-xl border border-white/5 flex gap-5 items-center shadow-sm hover:bg-[#1a2339] transition-colors cursor-pointer group hover:border-indi-gold/20">
+        <div className="bg-[#131b2e] p-5 rounded-xl border border-white/5 flex gap-5 items-center shadow-sm hover:bg-[#1a2339] transition-colors cursor-pointer group hover:border-indi-gold/20 relative overflow-hidden">
+            <div className="absolute inset-0 opacity-[0.03] pointer-events-none group-hover:opacity-[0.06] transition-opacity">
+                <img src="/assets/temple.jpg" className="w-full h-full object-cover grayscale" />
+            </div>
             <div className={`w-12 h-12 rounded-full border ${colors[color] || colors.amber} flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform`}>
                 {icon}
             </div>

@@ -25,6 +25,9 @@ const SettingsScreen = () => {
             className="w-full h-full bg-transparent text-slate-100 flex flex-col font-sans overflow-hidden relative"
         >
             {/* Background Decorative Elements */}
+            <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none">
+                <img src="/assets/Akshardham-Temple-New-Delhi.jpg" className="w-full h-full object-cover grayscale" />
+            </div>
             <div className="absolute inset-0 bg-indi-gold/5 rounded-full blur-[120px] pointer-events-none" style={{ top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 800, height: 800 }}></div>
 
             {/* Header */}

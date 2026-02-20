@@ -101,8 +101,13 @@ export default function AuthScreen({ onAuthSuccess, onBack }: AuthScreenProps) {
             <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-blue-500/5 rounded-full blur-[100px] pointer-events-none"></div>
 
             {/* Left Panel: Branding & Info */}
-            <div className="flex flex-1 flex-col items-center justify-center p-12 relative z-10 border-r border-white/5 bg-gradient-to-br from-black/40 to-transparent">
-                <div className="max-w-xl flex flex-col items-center text-center">
+            <div className="flex flex-1 flex-col items-center justify-center p-12 relative z-10 border-r border-white/5 overflow-hidden">
+                <div className="absolute inset-0 z-0">
+                    <img src="/assets/Akshardham-Temple-New-Delhi.jpg" alt="Background" className="w-full h-full object-cover opacity-30 mix-blend-luminosity" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-black/40 to-transparent"></div>
+                    <div className="absolute inset-0 backdrop-blur-[2px]"></div>
+                </div>
+                <div className="max-w-xl flex flex-col items-center text-center relative z-10">
                     {/* Logo Section */}
                     <motion.div
                         initial={{ scale: 0.9, opacity: 0 }}

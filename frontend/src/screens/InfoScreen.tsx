@@ -36,6 +36,9 @@ const InfoScreen = ({ onBack }: { onBack: () => void }) => {
                 {/* Right: Info */}
                 <div className="w-1/2 h-full p-10 flex flex-col bg-[#0b101b] relative overflow-hidden">
                     {/* Background Decor */}
+                    <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
+                        <img src="/assets/indian-religious-monuments.jpg" className="w-full h-full object-cover grayscale" />
+                    </div>
                     <div className="absolute -top-20 -right-20 w-64 h-64 bg-indi-gold/5 rounded-full blur-3xl pointer-events-none"></div>
 
                     {/* Stats Grid */}

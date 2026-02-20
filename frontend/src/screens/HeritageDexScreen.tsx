@@ -10,7 +10,10 @@ const HeritageDexScreen = () => {
             className="w-full h-full bg-transparent text-slate-100 flex font-sans overflow-hidden"
         >
             {/* Left Panel: Search & Filters (Fixed width) */}
-            <div className="w-[320px] h-full border-r border-white/10 bg-black/50 backdrop-blur-md flex flex-col z-10 shrink-0 shadow-xl">
+            <div className="w-[320px] h-full border-r border-white/10 bg-black/60 backdrop-blur-md flex flex-col z-10 shrink-0 shadow-xl relative overflow-hidden">
+                <div className="absolute inset-0 opacity-5 pointer-events-none">
+                    <img src="/assets/indian-religious-monuments.jpg" className="w-full h-full object-cover grayscale" />
+                </div>
                 <div className="p-6 border-b border-white/5">
                     <h2 className="font-serif text-2xl tracking-wide text-indi-gold mb-1">Grantha</h2>
                     <p className="text-[10px] text-slate-500 uppercase tracking-widest">Heritage-Dex System</p>
@@ -59,14 +62,14 @@ const HeritageDexScreen = () => {
                     <DexCard
                         title="The Stone Chariot"
                         desc="A shrine built in the form of a temple chariot. Legend says the wheels could once turn..."
-                        img="/assets/temple.jpg"
+                        img="/assets/Thanjavur-Brihadeeshwara-Temple.jpg"
                         tags={['Rare Find', 'Discovered: 12 Oct']}
                         isRare
                     />
                     <DexCard
                         title="Virupaksha Tower"
                         desc="The main shrine dedicated to Lord Virupaksha. The tower casts an inverted shadow in the inner sanctum."
-                        img="/assets/temple (2).jpg"
+                        img="/assets/Golgumbaz.jpg"
                         tags={['Common', 'Verified']}
                     />
                     <DexCard

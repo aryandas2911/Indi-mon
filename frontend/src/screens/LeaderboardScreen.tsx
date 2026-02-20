@@ -37,9 +37,12 @@ const LeaderboardScreen = () => {
             {/* Content */}
             <div className="flex-1 flex overflow-hidden">
                 {/* Top 3 Podium (Left Panel) */}
-                <div className="w-[45%] h-full bg-black/40 backdrop-blur-sm p-8 flex flex-col justify-center items-center relative border-r border-white/10">
+                <div className="w-[45%] h-full bg-black/40 backdrop-blur-sm p-8 flex flex-col justify-center items-center relative border-r border-white/10 overflow-hidden">
                     {/* Decoration */}
-                    <div className="absolute inset-0 bg-[url('/assets/map.png')] opacity-5 mix-blend-overlay"></div>
+                    <div className="absolute inset-0 z-0">
+                        <img src="/assets/Golgumbaz.jpg" className="w-full h-full object-cover opacity-10 grayscale mix-blend-overlay" />
+                        <div className="absolute inset-0 bg-[url('/assets/map.png')] opacity-20 mix-blend-overlay"></div>
+                    </div>
 
                     <div className="flex items-end gap-4 relative z-10 translate-y-4">
                         {/* Rank 2 */}
