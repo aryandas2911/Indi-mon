@@ -64,7 +64,7 @@ export default function App() {
     switch (screen) {
       case 'PROFILE': return <ProfileScreen />;
       case 'LEADERBOARD': return <LeaderboardScreen />;
-      case 'DEX': return <div onClick={() => setShowInfo(true)} className="h-full"><HeritageDexScreen /></div>;
+      case 'DEX': return <HeritageDexScreen onOpenInfo={() => setShowInfo(true)} />;
       case 'MAP': return <MapScreen onShowCamera={() => setShowCamera(true)} />;
       case 'SETTINGS': return <SettingsScreen />;
       default: return null;
@@ -117,17 +117,17 @@ export default function App() {
         <div
           className="w-full h-full flex items-center justify-center text-white relative overflow-hidden cursor-pointer group"
           style={{
-            background: `linear-gradient(rgba(240, 230, 210, 0.05), rgba(240, 230, 210, 0.05)), url("/assets/map.png")`,
-            backgroundColor: '#8d6e63',
+            background: `linear-gradient(rgba(30, 15, 5, 0.18), rgba(30, 15, 5, 0.18)), url("/assets/map.png")`,
+            backgroundColor: '#2D1B15',
             backgroundSize: 'cover',
             backgroundBlendMode: 'multiply',
-            filter: 'brightness(1.2) contrast(1.1) saturate(1.1)',
+            filter: 'none',
           }}
           onClick={() => setScreen(user ? 'PROFILE' : 'AUTH')}
         >
-          {/* Warm sepia vignette overlay - Reduced opacity */}
+          {/* Warm sepia vignette overlay */}
           <div className="absolute inset-0 pointer-events-none" style={{
-            background: 'radial-gradient(ellipse at center, transparent 50%, rgba(30, 10, 0, 0.5) 100%)'
+            background: 'radial-gradient(ellipse at center, transparent 40%, rgba(30, 10, 0, 0.55) 100%)'
           }} />
 
           {/* Subtle Stone Block Texture Overlay */}
