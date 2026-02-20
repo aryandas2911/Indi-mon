@@ -2,7 +2,7 @@ import { Map, Scroll, Award, Settings, Briefcase } from 'lucide-react';
 
 interface SidebarProps {
     activeScreen: string;
-    setScreen: (screen: 'LANDING' | 'MAP' | 'DEX' | 'LEADERBOARD' | 'PROFILE') => void;
+    setScreen: (screen: 'LANDING' | 'AUTH' | 'MAP' | 'DEX' | 'LEADERBOARD' | 'PROFILE') => void;
 }
 
 const Sidebar = ({ activeScreen, setScreen }: SidebarProps) => {

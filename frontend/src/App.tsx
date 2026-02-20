@@ -7,6 +7,8 @@ import HeritageDexScreen from './screens/HeritageDexScreen';
 import CameraScreen from './screens/CameraScreen';
 import InfoScreen from './screens/InfoScreen';
 import MapScreen from './screens/MapScreen';
+import AuthScreen from './screens/AuthScreen';
+import { useAuth } from './hooks/useAuth';
 import { Info } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -50,10 +52,12 @@ const InfoCarousel = () => {
     </div>
   );
 };
+
 export default function App() {
-  const [screen, setScreen] = useState<'LANDING' | 'MAP' | 'DEX' | 'LEADERBOARD' | 'PROFILE'>('LANDING');
+  const [screen, setScreen] = useState<'LANDING' | 'AUTH' | 'MAP' | 'DEX' | 'LEADERBOARD' | 'PROFILE'>('LANDING');
   const [showCamera, setShowCamera] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
+  const { user, loading } = useAuth();
 
   const renderScreen = () => {
     switch (screen) {
@@ -64,6 +68,18 @@ export default function App() {
       default: return null;
     }
   };
+
+  // While auth state is loading, render nothing
+  if (loading) return null;
+
+  // If user is not authenticated, render the auth screen (unless they are on landing, let them see it first)
+  if (!user && screen !== 'LANDING') {
+    return (
+      <GameContainer>
+        <AuthScreen onAuthSuccess={() => setScreen('PROFILE')} onBack={() => setScreen('LANDING')} />
+      </GameContainer>
+    );
+  }
 
   return (
     <GameContainer>
@@ -89,7 +105,7 @@ export default function App() {
             backgroundSize: 'cover',
             backgroundBlendMode: 'multiply',
           }}
-          onClick={() => setScreen('PROFILE')}
+          onClick={() => setScreen(user ? 'PROFILE' : 'AUTH')}
         >
           {/* Subtle Stone Block Texture Overlay (Faked with CSS lines) */}
           <div className="absolute inset-0 opacity-10 pointer-events-none">
@@ -134,7 +150,7 @@ export default function App() {
                   <path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0" />
                   <path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0" />
                   <path d="M10 15V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0" />
-                  <path d="M6 8v1a2 2 0 0 0-2 2v0a2 2 0 0 0 2 2v0" />
+                  <path d="M6 8v1a2 2 0 0 0-2-2v0a2 2 0 0 0 2 2v0" />
                   <path d="M20 12v4.17A4.45 4.45 0 0 1 15.63 20h0a5.62 5.62 0 0 0-3.6 1.48v0a2 2 0 0 1-2.6 0v0a6.52 6.52 0 0 0-5.32-2.38H4" />
                 </svg>
               </div>
