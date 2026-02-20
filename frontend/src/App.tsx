@@ -71,8 +71,23 @@ export default function App() {
     }
   };
 
-  // While auth state is loading, render nothing
-  if (loading) return null;
+  // Effect to handle navigation for authenticated users
+  useEffect(() => {
+    if (!loading && user && screen === 'LANDING') {
+      setScreen('PROFILE');
+    }
+  }, [loading, user, screen]);
+
+  // While auth state is loading, render a themed loading state
+  if (loading) {
+    return (
+      <div className="w-full h-full bg-[#0b101b] flex items-center justify-center">
+        <div className="text-indi-gold font-serif text-xl animate-pulse tracking-widest uppercase">
+          Invoking Ancient Maps...
+        </div>
+      </div>
+    );
+  }
 
   // If user is not authenticated, render the auth screen (unless they are on landing, let them see it first)
   if (!user && screen !== 'LANDING') {

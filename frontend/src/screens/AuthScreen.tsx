@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Mail, User, Eye, EyeOff, BookOpen, Key, MoveLeft, Shield, Info, Phone, Building2 } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
+import { api } from '../lib/api';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const INFO_SLIDES = [
@@ -67,24 +68,29 @@ export default function AuthScreen({ onAuthSuccess, onBack }: AuthScreenProps) {
 
         try {
             if (mode === 'LOGIN') {
-                const { error } = await supabase.auth.signInWithPassword({
-                    email,
-                    password,
-                });
-                if (error) throw error;
+                const data = await api.login({ email, password });
+                if (data.error) throw new Error(data.error.message);
+                
+                const { error: sessError } = await supabase.auth.setSession(data.session);
+                if (sessError) throw sessError;
             } else {
-                const { error } = await supabase.auth.signUp({
-                    email,
-                    password,
-                    options: {
-                        data: {
-                            full_name: fullName,
-                            phone: phone,
-                            organisation: organisation,
-                        },
-                    },
+                const data = await api.signup({ 
+                    email, 
+                    password, 
+                    full_name: fullName,
+                    phone: phone,
+                    organization: organisation
                 });
-                if (error) throw error;
+                if (data.error) throw new Error(data.error.message);
+
+                // Auto-login after signup if backend returns session, 
+                // but current backend signup only returns user.
+                // You might need to login manually or update backend signup.
+                const loginData = await api.login({ email, password });
+                if (loginData.error) throw new Error(loginData.error.message);
+                
+                const { error: sessError } = await supabase.auth.setSession(loginData.session);
+                if (sessError) throw sessError;
             }
             onAuthSuccess();
         } catch (err: any) {
