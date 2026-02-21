@@ -3,7 +3,6 @@ import { Camera, Home, MapPin, X, Users, Search, ShoppingBag, Hotel, Utensils, T
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import type { HeritageSite, POI } from '../data/heritageSites';
-import { supabase } from '../lib/supabaseClient';
 
 interface MapScreenProps {
     sites: HeritageSite[];
@@ -16,9 +15,9 @@ const MapScreen = ({ sites, onShowCamera }: MapScreenProps) => {
     const [selectedSite, setSelectedSite] = useState<HeritageSite | null>(null);
     const [mapLoaded, setMapLoaded] = useState(false);
     const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
-    const [dynamicSites, setDynamicSites] = useState<HeritageSite[]>([]);
     const [nearbyPOIs, setNearbyPOIs] = useState<POI[]>([]);
     const [poiMarkers, setPoiMarkers] = useState<L.LayerGroup | null>(null);
+
 
     useEffect(() => {
         if ("geolocation" in navigator) {
@@ -33,29 +32,6 @@ const MapScreen = ({ sites, onShowCamera }: MapScreenProps) => {
         } else {
             setUserLocation([28.6139, 77.2090]);
         }
-
-        // Fetch dynamic sites from Supabase
-        const fetchDiscoveries = async () => {
-            const { data, error } = await supabase
-                .from('heritage_sites')
-                .select('*');
-            
-            if (error) {
-                console.error('Error fetching discoveries for map:', error);
-                return;
-            }
-
-            if (data) {
-                const mappedData: HeritageSite[] = data.map(item => ({
-                    ...item,
-                    id: `db-${item.id}`,
-                    coordinates: item.coordinates || [0, 0]
-                }));
-                setDynamicSites(mappedData);
-            }
-        };
-
-        fetchDiscoveries();
     }, []);
 
     useEffect(() => {
@@ -98,9 +74,7 @@ const MapScreen = ({ sites, onShowCamera }: MapScreenProps) => {
         setMapLoaded(true);
 
         // Add markers for heritage sites
-        const allSites = [...sites, ...dynamicSites];
-        // Filter out duplicates if any (e.g. if a site is in both static and dynamic)
-        const uniqueSites = allSites.filter((site, index, self) =>
+        const uniqueSites = sites.filter((site, index, self) =>
             index === self.findIndex((s) => s.id === site.id)
         );
 
@@ -255,30 +229,29 @@ const MapScreen = ({ sites, onShowCamera }: MapScreenProps) => {
                             <div className="flex-1 min-w-0 flex flex-col justify-between">
                                 <div>
                                     <div className="flex justify-between items-start mb-1">
-                                         <h3 className="font-serif text-2xl leading-tight text-amber-950 truncate">{selectedSite.name}</h3>
-                                         <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ml-2 shrink-0 ${
-                                             selectedSite.status === 'Verified' ? 'bg-green-600 text-white' : 
-                                             selectedSite.status === 'Pending' ? 'bg-amber-500 text-white' : 
-                                             'bg-slate-500 text-white'
-                                         }`}>
-                                             {selectedSite.status.toUpperCase()}
-                                         </span>
-                                     </div>
-                                     
-                                     {/* Coordinates, Region & Visitors */}
-                                     <div className="flex items-center justify-between text-[10px] text-amber-900/60 font-pixel mb-3">
-                                         <div className="flex items-center gap-1.5">
-                                             <MapPin size={10} />
-                                             <span>{selectedSite.coordinates?.[1]?.toFixed(4)}, {selectedSite.coordinates?.[0]?.toFixed(4)}</span>
-                                         </div>
-                                         <div className="flex items-center gap-3">
-                                             <span className="flex items-center gap-1">
-                                                 <Users size={10} />
-                                                 {selectedSite.visitorCount?.toLocaleString() || 0}
-                                             </span>
-                                             <span className="bg-amber-900/10 px-1.5 rounded">{selectedSite.region}</span>
-                                         </div>
-                                     </div>
+                                        <h3 className="font-serif text-2xl leading-tight text-amber-950 truncate">{selectedSite.name}</h3>
+                                        <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ml-2 shrink-0 ${selectedSite.status === 'Verified' ? 'bg-green-600 text-white' :
+                                            selectedSite.status === 'Pending' ? 'bg-amber-500 text-white' :
+                                                'bg-slate-500 text-white'
+                                            }`}>
+                                            {selectedSite.status.toUpperCase()}
+                                        </span>
+                                    </div>
+
+                                    {/* Coordinates, Region & Visitors */}
+                                    <div className="flex items-center justify-between text-[10px] text-amber-900/60 font-pixel mb-3">
+                                        <div className="flex items-center gap-1.5">
+                                            <MapPin size={10} />
+                                            <span>{selectedSite.coordinates?.[1]?.toFixed(4)}, {selectedSite.coordinates?.[0]?.toFixed(4)}</span>
+                                        </div>
+                                        <div className="flex items-center gap-3">
+                                            <span className="flex items-center gap-1">
+                                                <Users size={10} />
+                                                {selectedSite.visitorCount?.toLocaleString() || 0}
+                                            </span>
+                                            <span className="bg-amber-900/10 px-1.5 rounded">{selectedSite.region}</span>
+                                        </div>
+                                    </div>
 
                                     {/* Guardian Visitors Section */}
                                     <div className="flex items-center justify-between mb-3 border-y border-amber-900/5 py-2">

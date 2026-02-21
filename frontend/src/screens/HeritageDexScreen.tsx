@@ -1,44 +1,13 @@
 import { Search, Map, Info, Clock, CheckCircle2, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import type { HeritageSite } from '../data/heritageSites';
-import { supabase } from '../lib/supabaseClient';
 
 const HeritageDexScreen = ({ sites, onOpenInfo }: { sites: HeritageSite[], onOpenInfo: (site: HeritageSite) => void }) => {
     const [activeFilter, setActiveFilter] = useState<'ALL' | 'DELHI' | 'KERALA' | 'RAJASTHAN' | 'HAMPI' | 'UNDISCOVERED'>('ALL');
     const [searchQuery, setSearchQuery] = useState('');
-    const [dynamicSites, setDynamicSites] = useState<HeritageSite[]>([]);
 
-    useEffect(() => {
-        const fetchDiscoveries = async () => {
-            const { data, error } = await supabase
-                .from('heritage_sites')
-                .select('*')
-                .order('id', { ascending: false });
-
-            if (error) {
-                console.error('Error fetching discoveries:', error);
-                return;
-            }
-
-            if (data) {
-                // Map DB schema to HeritageSite interface if needed
-                const mappedData: HeritageSite[] = data.map(item => ({
-                    ...item,
-                    id: `db-${item.id}`,
-                    // Ensure coordinates are in [lng, lat] format
-                    coordinates: item.coordinates || [0, 0]
-                }));
-                setDynamicSites(mappedData);
-            }
-        };
-
-        fetchDiscoveries();
-    }, []);
-
-    const allSites = useMemo(() => {
-        return [...sites, ...dynamicSites];
-    }, [sites, dynamicSites]);
+    const allSites = sites;
 
     const filteredSites = useMemo(() => {
         return allSites.filter(site => {
