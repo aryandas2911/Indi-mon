@@ -17,6 +17,8 @@ const MapScreen = ({ sites, onShowCamera }: MapScreenProps) => {
     const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
     const [nearbyPOIs, setNearbyPOIs] = useState<POI[]>([]);
     const [poiMarkers, setPoiMarkers] = useState<L.LayerGroup | null>(null);
+    const [siteMarkers, setSiteMarkers] = useState<L.LayerGroup | null>(null);
+
 
     useEffect(() => {
         if ("geolocation" in navigator) {
@@ -33,6 +35,7 @@ const MapScreen = ({ sites, onShowCamera }: MapScreenProps) => {
         }
     }, []);
 
+    // Initialize Map
     useEffect(() => {
         if (!mapContainer.current || map.current || !userLocation) return;
 
@@ -50,6 +53,10 @@ const MapScreen = ({ sites, onShowCamera }: MapScreenProps) => {
         // Layer group for POI markers
         const poiGroup = L.layerGroup().addTo(map.current);
         setPoiMarkers(poiGroup);
+
+        // Layer group for Site markers
+        const siteGroup = L.layerGroup().addTo(map.current);
+        setSiteMarkers(siteGroup);
 
         const userIcon = L.divIcon({
             className: 'user-location-marker',
@@ -69,10 +76,27 @@ const MapScreen = ({ sites, onShowCamera }: MapScreenProps) => {
         });
 
         L.marker(userLocation, { icon: userIcon }).addTo(map.current);
-
         setMapLoaded(true);
 
-        sites.forEach((site) => {
+        return () => {
+            map.current?.remove();
+            map.current = null;
+        };
+    }, [userLocation]);
+
+    // Handle site markers separately so they update when 'sites' prop changes
+    useEffect(() => {
+        if (!map.current || !siteMarkers) return;
+
+        // Clear existing site markers
+        siteMarkers.clearLayers();
+
+        // Add markers for heritage sites
+        const uniqueSites = sites.filter((site, index, self) =>
+            index === self.findIndex((s) => s.id === site.id)
+        );
+
+        uniqueSites.forEach((site: HeritageSite) => {
             const latlng: L.LatLngExpression = [site.coordinates[1], site.coordinates[0]];
             const statusColor = site.status === 'Verified' ? '#f59e0b' :
                 site.status === 'Pending' ? '#fbbf24' : '#94a3b8';
@@ -95,21 +119,16 @@ const MapScreen = ({ sites, onShowCamera }: MapScreenProps) => {
                 iconAnchor: [20, 20]
             });
 
-            const marker = L.marker(latlng, { icon }).addTo(map.current!);
+            const marker = L.marker(latlng, { icon }).addTo(siteMarkers);
 
             marker.on('click', () => {
                 setSelectedSite(site);
-                setNearbyPOIs([]); // Clear POIs when switching sites
-                poiGroup.clearLayers();
+                setNearbyPOIs([]);
+                poiMarkers?.clearLayers();
                 map.current?.flyTo(latlng, 16, { duration: 1.5 });
             });
         });
-
-        return () => {
-            map.current?.remove();
-            map.current = null;
-        };
-    }, [userLocation]);
+    }, [sites, mapLoaded, siteMarkers]);
 
     // Handle showing POIs on map
     const handleDiscoverNearby = () => {
@@ -224,17 +243,27 @@ const MapScreen = ({ sites, onShowCamera }: MapScreenProps) => {
                                 <div>
                                     <div className="flex justify-between items-start mb-1">
                                         <h3 className="font-serif text-2xl leading-tight text-amber-950 truncate">{selectedSite.name}</h3>
-                                        <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ml-2 shrink-0 ${selectedSite.status === 'Verified' ? 'bg-green-600 text-white' : 'bg-amber-500 text-white'}`}>
+                                        <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ml-2 shrink-0 ${selectedSite.status === 'Verified' ? 'bg-green-600 text-white' :
+                                            selectedSite.status === 'Pending' ? 'bg-amber-500 text-white' :
+                                                'bg-slate-500 text-white'
+                                            }`}>
                                             {selectedSite.status.toUpperCase()}
                                         </span>
                                     </div>
 
+                                    {/* Coordinates, Region & Visitors */}
                                     <div className="flex items-center justify-between text-[10px] text-amber-900/60 font-pixel mb-3">
                                         <div className="flex items-center gap-1.5">
                                             <MapPin size={10} />
-                                            <span>{selectedSite.coordinates[1].toFixed(4)}, {selectedSite.coordinates[0].toFixed(4)}</span>
+                                            <span>{selectedSite.coordinates?.[1]?.toFixed(4)}, {selectedSite.coordinates?.[0]?.toFixed(4)}</span>
                                         </div>
-                                        <span className="bg-amber-900/10 px-1.5 rounded">{selectedSite.region}</span>
+                                        <div className="flex items-center gap-3">
+                                            <span className="flex items-center gap-1">
+                                                <Users size={10} />
+                                                {selectedSite.visitorCount?.toLocaleString() || 0}
+                                            </span>
+                                            <span className="bg-amber-900/10 px-1.5 rounded">{selectedSite.region}</span>
+                                        </div>
                                     </div>
 
                                     {/* Guardian Visitors Section */}
@@ -250,9 +279,6 @@ const MapScreen = ({ sites, onShowCamera }: MapScreenProps) => {
                                             <span className="text-[9px] font-pixel text-amber-900/60">
                                                 {selectedSite.visitorCount?.toLocaleString() || 0} Visitors
                                             </span>
-                                        </div>
-                                        <div className="flex items-center gap-1.5 text-amber-900/40">
-                                            <Users size={12} />
                                         </div>
                                     </div>
 

@@ -124,7 +124,7 @@ export const heritageSites: HeritageSite[] = [
         category: 'monument',
         image: '/assets/humayun tomb.jpg',
         region: 'Delhi',
-        status: 'Pending',
+        status: 'Verified',
         discoveredOn: '20 Nov',
         visitorCount: 15600,
         submittedBy: 'Delhi_Explorer',

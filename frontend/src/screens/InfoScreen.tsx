@@ -88,10 +88,14 @@ const InfoScreen = ({ site, onBack }: InfoScreenProps) => {
 
                             <div className="grid grid-cols-2 gap-6">
                                 <div className="flex items-center gap-3 text-slate-300">
-                                    <div className="p-2 bg-white/5 rounded-lg text-indi-gold"><MapPin size={16} /></div>
+                                    <div className="p-2 bg-white/5 rounded-lg text-indi-gold">
+                                        <MapPin size={16} />
+                                    </div>
                                     <div className="flex flex-col">
                                         <span className="text-[8px] font-pixel uppercase tracking-widest text-slate-500">Coordinates</span>
-                                        <span className="font-pixel text-[10px] tracking-tighter">{site.coordinates?.[0]?.toFixed(5)}, {site.coordinates?.[1]?.toFixed(5)}</span>
+                                        <span className="font-pixel text-[10px] tracking-tighter">
+                                            {site.coordinates?.[1]?.toFixed(4)}, {site.coordinates?.[0]?.toFixed(4)}
+                                        </span>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-3 text-slate-300">
@@ -115,6 +119,28 @@ const InfoScreen = ({ site, onBack }: InfoScreenProps) => {
                             <p className="text-slate-200 leading-relaxed font-serif text-xl italic opacity-80 border-l-2 border-indi-gold/30 pl-8 py-4 bg-white/5 rounded-r-2xl">
                                 "{site.description}"
                             </p>
+                            
+                            {site.history && (
+                                <div className="mt-8">
+                                    <h4 className="text-indi-gold font-pixel text-[10px] uppercase tracking-widest mb-3">Significance</h4>
+                                    <p className="text-slate-300 font-serif leading-relaxed">
+                                        {site.history}
+                                    </p>
+                                </div>
+                            )}
+
+                            {site.activities && site.activities.length > 0 && (
+                                <div className="mt-8">
+                                    <h4 className="text-indi-gold font-pixel text-[10px] uppercase tracking-widest mb-3">Rituals & Endeavors</h4>
+                                    <div className="flex flex-wrap gap-2">
+                                        {site.activities.map((activity, i) => (
+                                            <span key={i} className="px-3 py-1 bg-white/5 border border-white/10 rounded-lg text-xs text-slate-400 font-serif">
+                                                {activity}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
                         </section>
 
                         {/* Community Observations */}

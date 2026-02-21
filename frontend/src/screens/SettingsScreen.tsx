@@ -8,11 +8,11 @@ import { useAuth } from '../hooks/useAuth';
 const SettingsScreen = () => {
     const { profile, refreshProfile } = useAuth();
     const displayName = profile?.full_name || 'Explorer';
-    
+
     const [isLoggingOut, setIsLoggingOut] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-    
+
     const [isEditing, setIsEditing] = useState(false);
     const [fullName, setFullName] = useState(displayName);
     const [phone, setPhone] = useState(profile?.phone || '');
@@ -65,8 +65,8 @@ const SettingsScreen = () => {
 
     const containerVariants: any = {
         hidden: { opacity: 0, y: 10 },
-        visible: { 
-            opacity: 1, 
+        visible: {
+            opacity: 1,
             y: 0,
             transition: { duration: 0.5, ease: "easeOut" }
         }
@@ -88,7 +88,7 @@ const SettingsScreen = () => {
             {/* Header */}
             <div className="h-24 border-b border-white/10 bg-black/50 backdrop-blur-md flex items-center px-12 shrink-0 z-10">
                 <div className="flex items-center gap-6">
-                    <motion.div 
+                    <motion.div
                         initial={{ rotate: -10, opacity: 0 }}
                         animate={{ rotate: 0, opacity: 1 }}
                         className="p-3 bg-indi-gold/10 rounded-xl text-indi-gold border border-indi-gold/20 shadow-[0_0_15px_rgba(245,158,11,0.1)]"
@@ -113,7 +113,7 @@ const SettingsScreen = () => {
                         <div className="h-[1px] bg-indi-gold/20 flex-1"></div>
                     </div>
 
-                    <motion.div 
+                    <motion.div
                         layout
                         className="max-w-4xl mx-auto bg-[#131b2e]/60 border border-white/5 rounded-2xl p-10 relative overflow-hidden group hover:border-indi-gold/20 transition-colors shadow-2xl"
                     >
@@ -128,33 +128,33 @@ const SettingsScreen = () => {
                                 </div>
                                 <div className="absolute -bottom-2 -right-2 bg-indi-gold text-black text-xl font-bold font-pixel w-10 h-10 rounded-full flex items-center justify-center border-2 border-black z-20">42</div>
                             </motion.div>
- 
+
                             <div className="flex-1">
                                 <div className="flex justify-between items-start mb-4">
                                     <div className="flex-1">
                                         <AnimatePresence mode="wait">
                                             {isEditing ? (
-                                                <motion.div 
+                                                <motion.div
                                                     key="editing"
                                                     initial={{ opacity: 0, x: -10 }}
                                                     animate={{ opacity: 1, x: 0 }}
                                                     exit={{ opacity: 0, x: 10 }}
                                                     className="space-y-4 max-w-md"
                                                 >
-                                                    <input 
-                                                        value={fullName} 
+                                                    <input
+                                                        value={fullName}
                                                         onChange={e => setFullName(e.target.value)}
                                                         className="w-full bg-black/40 border border-indi-gold/30 rounded-lg px-4 py-2 text-2xl font-serif text-slate-100 focus:outline-none focus:border-indi-gold transition-colors"
                                                         placeholder="Explorer Name"
                                                     />
-                                                    <input 
-                                                        value={phone} 
+                                                    <input
+                                                        value={phone}
                                                         onChange={e => setPhone(e.target.value)}
                                                         className="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-2 text-sm text-slate-300 focus:outline-none focus:border-indi-gold/40 transition-colors"
                                                         placeholder="Phone"
                                                     />
-                                                    <input 
-                                                        value={organization} 
+                                                    <input
+                                                        value={organization}
                                                         onChange={e => setOrganization(e.target.value)}
                                                         className="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-2 text-sm text-slate-300 focus:outline-none focus:border-indi-gold/40 transition-colors"
                                                         placeholder="Organization"
@@ -182,40 +182,40 @@ const SettingsScreen = () => {
                                         <div className="flex gap-2">
                                             <AnimatePresence mode="wait">
                                                 {isEditing ? (
-                                                    <motion.div 
+                                                    <motion.div
                                                         key="edit-actions"
                                                         initial={{ opacity: 0, scale: 0.8 }}
                                                         animate={{ opacity: 1, scale: 1 }}
                                                         exit={{ opacity: 0, scale: 0.8 }}
                                                         className="flex gap-2"
                                                     >
-                                                        <motion.button 
+                                                        <motion.button
                                                             whileHover={{ scale: 1.1 }}
                                                             whileTap={{ scale: 0.9 }}
-                                                            onClick={handleUpdate} 
-                                                            disabled={isUpdating} 
+                                                            onClick={handleUpdate}
+                                                            disabled={isUpdating}
                                                             className="p-2 bg-green-500/10 text-green-500 border border-green-500/20 rounded-lg hover:bg-green-500/20 transition-colors"
                                                         >
                                                             {isUpdating ? <div className="w-5 h-5 border-2 border-green-500/30 border-t-green-500 rounded-full animate-spin" /> : <Check size={20} />}
                                                         </motion.button>
-                                                        <motion.button 
+                                                        <motion.button
                                                             whileHover={{ scale: 1.1 }}
                                                             whileTap={{ scale: 0.9 }}
-                                                            onClick={() => setIsEditing(false)} 
+                                                            onClick={() => setIsEditing(false)}
                                                             className="p-2 bg-red-500/10 text-red-500 border border-red-500/20 rounded-lg hover:bg-red-500/20 transition-colors"
                                                         >
                                                             <X size={20} />
                                                         </motion.button>
                                                     </motion.div>
                                                 ) : (
-                                                    <motion.button 
+                                                    <motion.button
                                                         key="edit-trigger"
                                                         initial={{ opacity: 0, scale: 0.8 }}
                                                         animate={{ opacity: 1, scale: 1 }}
                                                         exit={{ opacity: 0, scale: 0.8 }}
                                                         whileHover={{ scale: 1.1 }}
                                                         whileTap={{ scale: 0.9 }}
-                                                        onClick={() => setIsEditing(true)} 
+                                                        onClick={() => setIsEditing(true)}
                                                         className="p-2 bg-indi-gold/10 text-indi-gold border border-indi-gold/20 rounded-lg hover:bg-indi-gold/20 transition-colors"
                                                     >
                                                         <Edit2 size={20} />
@@ -225,11 +225,13 @@ const SettingsScreen = () => {
                                         </div>
                                     </div>
                                 </div>
- 
+
                                 <p className="text-slate-400 font-serif italic text-lg leading-relaxed mb-6 border-l-2 border-indi-gold/20 pl-6">
                                     "Bearer of Records, Seeker of Lost Sites. Your journey through the fog of history has illuminated the paths of many."
                                 </p>
- 
+
+
+
                                 <div className="w-full">
                                     <div className="flex justify-between text-[10px] uppercase tracking-widest text-slate-500 mb-2">
                                         <span>Path to Next Enlightenment</span>
@@ -390,7 +392,7 @@ const SettingsScreen = () => {
                                 </>
                             ) : (
                                 <div className="py-10">
-                                     <div className="relative w-24 h-24 mx-auto mb-8">
+                                    <div className="relative w-24 h-24 mx-auto mb-8">
                                         <div className="absolute inset-0 border-4 border-red-500/20 rounded-full"></div>
                                         <div className="absolute inset-0 border-4 border-t-red-500 rounded-full animate-spin"></div>
                                     </div>
@@ -401,7 +403,7 @@ const SettingsScreen = () => {
                     </motion.div>
                 )}
             </AnimatePresence>
-        </motion.div>
+        </motion.div >
     );
 };
 

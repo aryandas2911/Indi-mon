@@ -2,6 +2,7 @@ import { useRef, useEffect, useState } from 'react';
 import { X, Zap, RefreshCw, Maximize, Camera, Check, AlertCircle, MapPin, ChevronDown } from 'lucide-react';
 import { heritageSites } from '../data/heritageSites';
 import { motion, AnimatePresence } from 'framer-motion';
+import { supabase } from '../lib/supabaseClient';
 
 const CameraScreen = ({ onClose }: { onClose: () => void }) => {
     const videoRef = useRef<HTMLVideoElement>(null);
@@ -11,8 +12,10 @@ const CameraScreen = ({ onClose }: { onClose: () => void }) => {
     const [isVerifying, setIsVerifying] = useState(false);
     const [selectedMonument, setSelectedMonument] = useState<string>('');
     const [verificationResult, setVerificationResult] = useState<'SUCCESS' | 'PENDING' | 'DENIED' | null>(null);
-    const [location, setLocation] = useState<{lat: number, lng: number} | null>(null);
+    const [location, setLocation] = useState<{ lat: number, lng: number } | null>(null);
     const [distanceError, setDistanceError] = useState<number | null>(null);
+    const [newMonumentName, setNewMonumentName] = useState('');
+    const [isUploading, setIsUploading] = useState(false);
 
     useEffect(() => {
         startCamera();
@@ -24,15 +27,16 @@ const CameraScreen = ({ onClose }: { onClose: () => void }) => {
         };
     }, []);
 
+
     const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
         const R = 6371; // Earth radius in km
         const dLat = (lat2 - lat1) * Math.PI / 180;
         const dLon = (lon2 - lon1) * Math.PI / 180;
-        const a = 
-            Math.sin(dLat/2) * Math.sin(dLat/2) +
-            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-            Math.sin(dLon/2) * Math.sin(dLon/2);
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        const a =
+            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         return R * c;
     };
 
@@ -89,7 +93,7 @@ const CameraScreen = ({ onClose }: { onClose: () => void }) => {
         }
     };
 
-    const handleVerify = () => {
+    const handleVerify = async () => {
         if (!location) {
             alert("No location data found. Please enable GPS.");
             return;
@@ -97,17 +101,69 @@ const CameraScreen = ({ onClose }: { onClose: () => void }) => {
 
         setIsVerifying(true);
         setDistanceError(null);
-        
-        setTimeout(() => {
+
+        try {
             if (selectedMonument === 'new') {
+                const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+                if (sessionError) throw sessionError;
+
+                const userId = sessionData?.session?.user?.id;
+
+                if (!userId) {
+                    alert("Session expired. Log in again to record your discovery.");
+                    setIsVerifying(false);
+                    return;
+                }
+
+                if (!newMonumentName) {
+                    alert("Please enter a name for the discovery.");
+                    setIsVerifying(false);
+                    return;
+                }
+
+                setIsUploading(true);
+
+                // 1. Convert base64 to Blob
+                const base64Data = capturedImage!.split(',')[1];
+                const blob = await fetch(`data:image/jpeg;base64,${base64Data}`).then(res => res.blob());
+
+                // 2. Upload to Supabase Storage
+                const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.jpg`;
+                const { error: uploadError } = await supabase.storage
+                    .from('heritage-images')
+                    .upload(`discoveries/${fileName}`, blob, { upsert: true });
+
+                if (uploadError) throw uploadError;
+
+                // 3. Get public URL
+                const { data: publicData } = supabase.storage
+                    .from('heritage-images')
+                    .getPublicUrl(`discoveries/${fileName}`);
+
+                const publicUrl = publicData?.publicUrl;
+                if (!publicUrl) throw new Error("Failed to get public URL");
+
+                // 4. Insert into heritage_sites table
+                const { error: insertError } = await supabase
+                    .from('heritage_sites')
+                    .insert([{
+                        title: newMonumentName,
+                        coordinates: [location.lng, location.lat],
+                        image_url: publicUrl,
+                        ai_confidence: 0.82 + Math.random() * 0.15, // Simulate AI confidence
+                        created_by: userId
+                    }]);
+
+                if (insertError) throw insertError;
+
                 setVerificationResult('PENDING');
             } else {
                 const site = heritageSites.find(s => s.id === selectedMonument);
                 if (site) {
                     const dist = calculateDistance(
-                        location.lat, 
-                        location.lng, 
-                        site.coordinates[1], 
+                        location.lat,
+                        location.lng,
+                        site.coordinates[1],
                         site.coordinates[0]
                     );
 
@@ -120,8 +176,13 @@ const CameraScreen = ({ onClose }: { onClose: () => void }) => {
                     }
                 }
             }
+        } catch (error: any) {
+            console.error("Verification/Upload error:", error);
+            alert(`Error: ${error.message || "Failed to process discovery"}`);
+        } finally {
             setIsVerifying(false);
-        }, 2000);
+            setIsUploading(false);
+        }
     };
 
     const resetCamera = () => {
@@ -137,10 +198,10 @@ const CameraScreen = ({ onClose }: { onClose: () => void }) => {
             {/* Live Camera Feed / Captured Image */}
             <div className="absolute inset-0 bg-slate-900">
                 {!capturedImage ? (
-                    <video 
-                        ref={videoRef} 
-                        autoPlay 
-                        playsInline 
+                    <video
+                        ref={videoRef}
+                        autoPlay
+                        playsInline
                         className="w-full h-full object-cover"
                     />
                 ) : (
@@ -154,7 +215,7 @@ const CameraScreen = ({ onClose }: { onClose: () => void }) => {
             {/* HUD Layer */}
             <AnimatePresence>
                 {!capturedImage && (
-                    <motion.div 
+                    <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
@@ -200,7 +261,7 @@ const CameraScreen = ({ onClose }: { onClose: () => void }) => {
                         </div>
 
                         <div className="absolute right-8 top-1/2 -translate-y-1/2 flex flex-col gap-6 pointer-events-auto">
-                            <button 
+                            <button
                                 onClick={takePicture}
                                 className="w-24 h-24 rounded-full border-4 border-white flex items-center justify-center relative group active:scale-95 transition-transform shadow-lg bg-black/20 backdrop-blur-sm"
                             >
@@ -218,7 +279,7 @@ const CameraScreen = ({ onClose }: { onClose: () => void }) => {
             {/* Verification Dialog */}
             <AnimatePresence>
                 {capturedImage && !verificationResult && (
-                    <motion.div 
+                    <motion.div
                         initial={{ opacity: 0, y: 50 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 50 }}
@@ -235,7 +296,7 @@ const CameraScreen = ({ onClose }: { onClose: () => void }) => {
                                 <div>
                                     <label className="block text-[10px] font-bold text-amber-900/50 uppercase tracking-widest mb-2">Heritage Sanctum</label>
                                     <div className="relative">
-                                        <select 
+                                        <select
                                             value={selectedMonument}
                                             onChange={(e) => setSelectedMonument(e.target.value)}
                                             className="w-full bg-white border-2 border-amber-900/10 rounded-xl px-4 py-4 text-amber-950 font-serif focus:outline-none focus:border-indi-gold transition-colors appearance-none cursor-pointer text-lg shadow-inner"
@@ -255,8 +316,10 @@ const CameraScreen = ({ onClose }: { onClose: () => void }) => {
                                 {selectedMonument === 'new' && (
                                     <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}>
                                         <label className="block text-[10px] font-bold text-amber-900/50 uppercase tracking-widest mb-2">Scroll Name</label>
-                                        <input 
-                                            type="text" 
+                                        <input
+                                            type="text"
+                                            value={newMonumentName}
+                                            onChange={(e) => setNewMonumentName(e.target.value)}
                                             placeholder="Enter the name of this relic..."
                                             className="w-full bg-white border-2 border-amber-900/10 rounded-xl px-4 py-3 text-amber-950 font-serif focus:outline-none focus:border-indi-gold transition-colors"
                                         />
@@ -264,13 +327,13 @@ const CameraScreen = ({ onClose }: { onClose: () => void }) => {
                                 )}
 
                                 <div className="flex gap-3">
-                                    <button 
+                                    <button
                                         onClick={resetCamera}
                                         className="flex-1 py-4 px-6 border-2 border-amber-900/10 rounded-xl text-amber-900 font-bold uppercase tracking-widest text-[10px] hover:bg-amber-900/5 transition-colors"
                                     >
                                         Reset Lens
                                     </button>
-                                    <button 
+                                    <button
                                         onClick={handleVerify}
                                         disabled={!selectedMonument || isVerifying || !location}
                                         className="flex-[2] py-4 px-6 bg-amber-950 text-white rounded-xl font-bold uppercase tracking-widest text-[10px] shadow-xl hover:bg-black transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
@@ -280,7 +343,7 @@ const CameraScreen = ({ onClose }: { onClose: () => void }) => {
                                         ) : (
                                             <Camera size={16} />
                                         )}
-                                        {isVerifying ? 'Verifying Soul...' : 'Invoke Identity'}
+                                        {isVerifying ? (isUploading ? 'Sealing Discovery...' : 'Verifying Soul...') : 'Invoke Identity'}
                                     </button>
                                 </div>
                             </div>
@@ -293,7 +356,7 @@ const CameraScreen = ({ onClose }: { onClose: () => void }) => {
             {/* Result Dialog */}
             <AnimatePresence>
                 {verificationResult && (
-                    <motion.div 
+                    <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         className="absolute inset-0 flex items-center justify-center z-[80] bg-black/80 backdrop-blur-sm p-4"
@@ -331,14 +394,14 @@ const CameraScreen = ({ onClose }: { onClose: () => void }) => {
                                         <p className="text-amber-900/70 font-serif italic mt-2">This soul is not yet bound to our records. Sent to ASI officials for Digital Sealing.</p>
                                         <div className="mt-6 p-4 bg-amber-50 rounded-xl border border-amber-200">
                                             <span className="text-[10px] font-pixel text-amber-700 uppercase tracking-widest text-left block">
-                                                Status: Pending Digital Panel<br/>
+                                                Status: Pending Digital Panel<br />
                                                 Registry: Under Verification
                                             </span>
                                         </div>
                                     </div>
                                 )}
 
-                                <button 
+                                <button
                                     onClick={verificationResult === 'DENIED' ? resetCamera : onClose}
                                     className="w-full py-4 bg-amber-950 text-white rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-black transition-colors shadow-lg"
                                 >

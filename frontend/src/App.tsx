@@ -12,7 +12,7 @@ import SettingsScreen from './screens/SettingsScreen';
 import { useAuth } from './hooks/useAuth';
 import { Info } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { heritageSites } from './data/heritageSites';
+import { supabase } from './lib/supabaseClient';
 import type { HeritageSite } from './data/heritageSites';
 
 const INFO_SLIDES = [
@@ -57,13 +57,102 @@ const InfoCarousel = () => {
 };
 
 export default function App() {
-  const [sites, setSites] = useState<HeritageSite[]>(heritageSites);
+  const [sites, setSites] = useState<HeritageSite[]>([]);
   const [screen, setScreen] = useState<'LANDING' | 'AUTH' | 'MAP' | 'DEX' | 'VERIFIER' | 'PROFILE' | 'SETTINGS'>('LANDING');
   const [showCamera, setShowCamera] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
   const [reviewSite, setReviewSite] = useState<HeritageSite | null>(null);
   const [selectedSite, setSelectedSite] = useState<HeritageSite | null>(null);
   const { user, loading } = useAuth();
+
+  useEffect(() => {
+    const fetchSites = async () => {
+      const { data, error } = await supabase
+        .from('heritage_sites')
+        .select('*');
+
+      if (error) {
+        console.error('Error fetching sites:', error);
+        return;
+      }
+
+      if (data) {
+        const mappedData: HeritageSite[] = data.map((item: any) => {
+          const specialNames = ["Stepwell", "Watchtower", "Lotus Mahal"];
+          const isSpecial = specialNames.some(name => item.title?.includes(name));
+
+          let frontendStatus: HeritageSite['status'] = item.verification_status.charAt(0).toUpperCase() + item.verification_status.slice(1) as any;
+
+          if (isSpecial && item.verification_status === 'verified') {
+            frontendStatus = 'Undiscovered';
+          }
+
+          return {
+            ...item,
+            id: String(item.id),
+            name: item.title,
+            image: item.image_url,
+            status: frontendStatus,
+            coordinates: item.coordinates || [0, 0],
+            discoveredOn: item.submission_date ? new Date(item.submission_date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) : undefined,
+            visitorCount: item.visitor_count || 1,
+            category: item.category || 'monument',
+            region: item.region || 'Delhi',
+            description: item.description || item.history || ""
+          };
+        });
+        setSites(mappedData);
+      }
+    };
+
+    fetchSites();
+  }, []);
+
+  const handleVerifySite = async (siteId: string) => {
+    const { error } = await supabase
+      .from('heritage_sites')
+      .update({
+        verification_status: 'verified',
+        submission_date: new Date().toISOString()
+      })
+      .eq('id', siteId);
+
+    if (error) {
+      console.error('Error verifying site:', error);
+      alert('Failed to verify site');
+      return;
+    }
+
+    const specialNames = ["Stepwell", "Watchtower", "Lotus Mahal"];
+    setSites(prev => prev.map(s => {
+      if (s.id === siteId) {
+        const isSpecial = specialNames.some(name => s.name.includes(name));
+        return {
+          ...s,
+          status: isSpecial ? 'Undiscovered' : 'Verified',
+          discoveredOn: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })
+        };
+      }
+      return s;
+    }));
+    setReviewSite(null);
+  };
+
+  const handleRejectSite = async (siteId: string) => {
+    const { error } = await supabase
+      .from('heritage_sites')
+      .delete()
+      .eq('id', siteId);
+
+    if (error) {
+      console.error('Error rejecting site:', error);
+      alert('Failed to reject site');
+      return;
+    }
+
+    setSites(prev => prev.filter(s => s.id !== siteId));
+    setReviewSite(null);
+  };
 
   const renderScreen = () => {
     switch (screen) {
@@ -81,8 +170,6 @@ export default function App() {
       default: return null;
     }
   };
-
-  // Effect to handle navigation for authenticated users
   useEffect(() => {
     if (!loading && user && screen === 'LANDING') {
       setScreen('PROFILE');
@@ -129,14 +216,8 @@ export default function App() {
           <VerificationModal
             site={reviewSite}
             onClose={() => setReviewSite(null)}
-            onVerify={() => {
-              const updatedSites = sites.map(s =>
-                s.id === reviewSite.id ? { ...s, status: 'Verified' as const, discoveredOn: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) } : s
-              );
-              setSites(updatedSites);
-              setReviewSite(null);
-            }}
-            onReject={() => setReviewSite(null)}
+            onVerify={() => handleVerifySite(reviewSite.id)}
+            onReject={() => handleRejectSite(reviewSite.id)}
           />
         )}
       </AnimatePresence>

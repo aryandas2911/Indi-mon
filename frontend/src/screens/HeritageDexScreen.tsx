@@ -1,15 +1,16 @@
 import { Search, Map, Info, Clock, CheckCircle2, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useMemo } from 'react';
-import { heritageSites } from '../data/heritageSites';
 import type { HeritageSite } from '../data/heritageSites';
 
 const HeritageDexScreen = ({ sites, onOpenInfo }: { sites: HeritageSite[], onOpenInfo: (site: HeritageSite) => void }) => {
     const [activeFilter, setActiveFilter] = useState<'ALL' | 'DELHI' | 'KERALA' | 'RAJASTHAN' | 'HAMPI' | 'UNDISCOVERED'>('ALL');
     const [searchQuery, setSearchQuery] = useState('');
 
+    const allSites = sites;
+
     const filteredSites = useMemo(() => {
-        return sites.filter(site => {
+        return allSites.filter(site => {
             const matchesSearch = site.name.toLowerCase().includes(searchQuery.toLowerCase());
 
             if (activeFilter === 'UNDISCOVERED') {
@@ -29,27 +30,27 @@ const HeritageDexScreen = ({ sites, onOpenInfo }: { sites: HeritageSite[], onOpe
 
             return site.region === regionFilterMap[activeFilter] && site.status === 'Verified' && matchesSearch;
         });
-    }, [activeFilter, searchQuery, sites]);
+    }, [activeFilter, searchQuery, allSites]);
 
     const undiscoveredSites = useMemo(() => {
         if (activeFilter === 'UNDISCOVERED') return []; // Handled by filteredSites
-        return sites.filter(site =>
+        return allSites.filter(site =>
             site.status === 'Undiscovered' &&
             site.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
             (activeFilter === 'ALL' || site.region.toUpperCase() === activeFilter)
         );
-    }, [activeFilter, searchQuery, sites]);
+    }, [activeFilter, searchQuery, allSites]);
 
     const counts = useMemo(() => {
         return {
-            ALL: sites.filter(s => s.status === 'Verified').length,
-            DELHI: sites.filter(s => s.region === 'Delhi' && s.status === 'Verified').length,
-            KERALA: sites.filter(s => s.region === 'Kerala' && s.status === 'Verified').length,
-            RAJASTHAN: sites.filter(s => s.region === 'Rajasthan' && s.status === 'Verified').length,
-            HAMPI: sites.filter(s => s.region === 'Hampi' && s.status === 'Verified').length,
-            UNDISCOVERED: sites.filter(s => s.status === 'Undiscovered').length,
+            ALL: allSites.filter(s => s.status !== 'Undiscovered').length,
+            DELHI: allSites.filter(s => s.region === 'Delhi' && s.status !== 'Undiscovered').length,
+            KERALA: allSites.filter(s => s.region === 'Kerala' && s.status !== 'Undiscovered').length,
+            RAJASTHAN: allSites.filter(s => s.region === 'Rajasthan' && s.status !== 'Undiscovered').length,
+            HAMPI: allSites.filter(s => s.region === 'Hampi' && s.status !== 'Undiscovered').length,
+            UNDISCOVERED: allSites.filter(s => s.status === 'Undiscovered').length,
         };
-    }, [sites]);
+    }, [allSites]);
 
     const backgroundMap: Record<string, string> = {
         'ALL': '/assets/indian-religious-monuments.jpg',
@@ -95,10 +96,10 @@ const HeritageDexScreen = ({ sites, onOpenInfo }: { sites: HeritageSite[], onOpe
                         </div>
                         <div className="flex items-baseline gap-2 mb-3">
                             <span className="text-3xl font-serif text-indi-gold">{counts.ALL}</span>
-                            <span className="text-sm text-slate-600">/ {heritageSites.length}</span>
+                            <span className="text-sm text-slate-600">/ {allSites.length}</span>
                         </div>
                         <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                            <div className="h-full bg-amber-500 transition-all duration-1000" style={{ width: `${(counts.ALL / sites.length) * 100}%` }}></div>
+                            <div className="h-full bg-amber-500 transition-all duration-1000" style={{ width: `${(counts.ALL / allSites.length) * 100}%` }}></div>
                         </div>
                     </div>
                 </div>
