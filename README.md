@@ -113,6 +113,22 @@ Official Registry Entry
 
 ---
 
+## Screenshots
+
+### Landing Page
+![Landing](screenshots/landing.png)
+
+### Profile Page
+![Profile](screenshots/profile.png)
+
+### Map Page
+![Map](screenshots/map.png)
+
+### Grantha Page
+![Grantha](screenshots/grantha.png)
+
+---
+
 ## Security & Performance
 - Supabase Row-Level Security enabled
 - Only authenticated users can submit
